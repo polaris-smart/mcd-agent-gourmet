@@ -1,12 +1,38 @@
-# 麦门多 agent 协作点餐 · mcd-agent-gourmet
+# 麦门省钱王 · mcd-agent-gourmet
 
-> 基于麦当劳中国 MCP 的多智能体协作点餐 Skill
-> 不同角色 agent 分工协作，owner 审批后安全下单
+> 多 agent 协作帮你点最省的麦当劳
+> 营养师+预算师+口味师分工，owner 审批后安全下单
+
+[![Polaris-Smart LAB](https://img.shields.io/badge/Polaris--Smart-LAB-blue?style=flat-square)](https://polaris-smart.github.io)
+[![GitHub](https://img.shields.io/badge/GitHub-polaris--smart-black?style=flat-square&logo=github)](https://github.com/polaris-smart)
+[![X](https://img.shields.io/badge/X-%40polaris__smart-black?style=flat-square&logo=x)](https://x.com/polaris_smart)
+
+## 用户收益
+
+| 痛点 | 我们帮你解决 |
+|---|---|
+| **"怎么点最省？"** | 预算师枚举最优组合，暴露凑单陷阱 |
+| **"券快过期了！"** | 主动提醒沉默成本（即将过期的券=白扔的钱） |
+| **"怎么吃健康？"** | 营养师分析营养构成，标记超标项 |
+| **"选择困难症"** | 三 agent 分工推荐，owner 一键审批 |
 
 ## 定位
 
 市面上的麦当劳 Skill 都在回答"怎么点最省/怎么点最健康"。
-我们回答一个不同的问题：**"一群 agent 怎么协作帮你点餐"**。
+我们回答一个更完整的问题：**"一群 agent 怎么协作帮你点餐"**。
+
+正如麦当劳官方所说：**"帮助 AI Agent 连接麦当劳服务"**、
+**"集成点餐、领券等核心能力，快速构建拥有麦当劳能力的专属 AI Agent"**——
+我们在此基础上，加入**多 agent 协作**与**治理层**：
+不是"一个 agent 帮你点餐"，而是"一群 agent 协作，owner 审批后安全下单"。
+
+## 官方三大核心能力覆盖
+
+| 官方能力 | 我们的实现 |
+|---|---|
+| **智能点餐** | 多 agent 协作点餐（营养师+预算师+口味师+owner 审批） |
+| **日历活动抢先知** | 预算师主动提醒"券快过期"（沉默成本） |
+| **优惠券周周领** | 预算师枚举最优组合（暴露凑单陷阱） |
 
 ## 核心设计
 
