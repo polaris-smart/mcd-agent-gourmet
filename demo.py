@@ -28,25 +28,17 @@ def mcp_call(tool_name, params, config):
         "jsonrpc": "2.0",
         "id": 1,
         "method": "tools/call",
-        "params": {
-            "name": tool_name,
-            "arguments": params
-        }
+        "params": {"name": tool_name, "arguments": params}
     }
     req = urllib.request.Request(
         url,
         data=json.dumps(payload).encode("utf-8"),
-        headers={
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {token}"
-        },
+        headers={"Content-Type": "application/json", "Authorization": f"Bearer {token}"},
         method="POST"
     )
     try:
         with urllib.request.urlopen(req, timeout=15) as resp:
             return json.loads(resp.read().decode("utf-8"))
-    except urllib.error.HTTPError as e:
-        return {"error": f"HTTP {e.code}: {e.read().decode('utf-8')[:200]}"}
     except Exception as e:
         return {"error": str(e)}
 
@@ -132,19 +124,76 @@ def main():
         print("数据源：麦当劳 MCP Server 实时调用")
         print()
         
-        # 真实调用：查询附近门店
+        # 第一步：查询附近门店
         print("=" * 60)
-        print("第一步：查询附近门店")
+        print("第一步：query-nearby-stores（南京东城汇）")
         print("=" * 60)
-        result = mcp_call("query-nearby-stores", {"address": "南京东城汇"}, config)
+        result = mcp_call("query-nearby-stores", {
+            "beType": 1,           # 到店自取
+            "searchType": 2,       # 按位置搜索
+            "city": "南京",
+            "keyword": "东城汇"
+        }, config)
+        
         if "error" in result:
             print(f"❌ MCP 调用失败：{result['error']}")
             print("降级到 fixture demo 模式...")
             config = None
         else:
-            print(f"✓ MCP 调用成功（工具：query-nearby-stores）")
-            print(f"响应：{json.dumps(result, ensure_ascii=False, indent=2)[:500]}")
-            print()
+            structured = result["result"].get("structuredContent", {})
+            data = structured.get("data", [])
+            if data:
+                store = data[0]
+                print(f"✓ 找到门店：{store['storeName']}")
+                print(f"  地址：{store['address']}")
+                print(f"  距离：{store['distance']} 米")
+                print(f"  营业：{store['businessStartTime']}-{store['businessEndTime']}")
+                print(f"  状态：{'营业中' if store['businessStatus'] else '已打烊'}")
+                store_code = store['storeCode']
+                print()
+                
+                # 第二步：查询菜单
+                print("=" * 60)
+                print("第二步：query-meals（查询菜单）")
+                print("=" * 60)
+                result = mcp_call("query-meals", {
+                    "storeCode": store_code,
+                    "beType": 1,
+                    "orderType": 1
+                }, config)
+                
+                if "error" not in result:
+                    structured = result["result"].get("structuredContent", {})
+                    data = structured.get("data", {})
+                    categories = data.get("categories", [])
+                    meals_map = data.get("meals", {})
+                    print(f"✓ {len(categories)} 个分类，{len(meals_map)} 个餐品")
+                    for cat in categories[:3]:
+                        print(f"  {cat.get('name', '?')}: {len(cat.get('meals', []))} 个餐品")
+                    print()
+                    
+                    # 提取前 5 个餐品
+                    meals_list = []
+                    for code, meal in list(meals_map.items())[:5]:
+                        meals_list.append({
+                            "code": code,
+                            "name": meal.get("name", "?"),
+                            "price": int(float(meal.get("currentPrice", "0")) * 100),
+                            "tags": meal.get("tags", [])
+                        })
+                    
+                    # 三 agent 并行工作
+                    nutrition = nutritionist_analyze(meals_list, load_fixture("nutrition"))
+                    budget = budgeter_optimize(meals_list, load_fixture("coupons"), budget=50)
+                    taste = taster_recommend(meals_list, preferences={"spicy": True})
+                    
+                    # 协调器汇总
+                    coordinator_collect(nutrition, budget, taste)
+                else:
+                    print(f"❌ query-meals 失败：{result['error']}")
+            else:
+                print("❌ 未找到门店")
+                config = None
     
     if not config or not config.get("mcp_token"):
         print("麦门多 agent 协作点餐 · 零配置演示（fixture 模式）")
