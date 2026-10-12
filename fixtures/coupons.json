@@ -1,0 +1,14 @@
+[
+  {
+    "name": "中薯条买一送一",
+    "threshold": 0,
+    "discount": 1450,
+    "days_left": 4
+  },
+  {
+    "name": "满20减3",
+    "threshold": 2000,
+    "discount": 300,
+    "days_left": 7
+  }
+]
