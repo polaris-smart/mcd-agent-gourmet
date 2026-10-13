@@ -46,6 +46,32 @@ def validate_snapshot(data):
     return data
 
 
+def tradeoff_candidates(plans):
+    """Non-dominated known candidates, without a made-up health score."""
+    known = [p for p in plans if p['eligible'] and p.get('sodium_mg') is not None]
+    strategies = {
+        'price_sodium': lambda p: (p['price_cents'], p['sodium_mg']),
+        'taste_sodium': lambda p: (int(not p['taste_match']), p['sodium_mg']),
+    }
+    result = {}
+    for name, dimensions in strategies.items():
+        def dominated(p):
+            a = dimensions(p)
+            return any(all(x <= y for x, y in zip(dimensions(q), a)) and
+                       any(x < y for x, y in zip(dimensions(q), a)) for q in known)
+        result[name] = [p['id'] for p in sorted(known, key=lambda p: (p['price_cents'], p['id']))
+                        if not dominated(p)]
+    return result
+
+
+def data_notice(data):
+    if data['mode'] == 'live':
+        return '本轮官方实时核价；价格与供应仍须以官方购买渠道确认。'
+    if data['mode'] == 'synthetic':
+        return '合成测试数据，不是官方报价，不可用于购买。'
+    return '历史快照演示，不是当前实时价格；使用 --live 重新核价。'
+
+
 def review(data, budget_cents=3500, taste="any", sodium_limit=None, side="any", now=None):
     validate_snapshot(data)
     if type(budget_cents) is not int or not 0 < budget_cents <= 1_000_000:
@@ -94,9 +120,11 @@ def review(data, budget_cents=3500, taste="any", sodium_limit=None, side="any", 
     choices = {"budget": budget_pick, "nutrition": nutrition_pick, "taste": taste_pick}
     reviewers = {role: p["id"] if p else None for role, p in choices.items()}
     result = {"mode": data["mode"], "store": data["store"], "captured_at": data["captured_at"],
+              "data_notice": data_notice(data),
               "requirements": {"budget_cents": budget_cents, "taste": taste, "sodium_limit": sodium_limit, "side": side},
               "plans": plans, "reviewers": reviewers, "feasible_count": len(eligible),
               "disagreement": len({x for x in reviewers.values() if x}) > 1, "selected": None}
+    result['tradeoffs'] = tradeoff_candidates(plans)
     result["review_id"] = hashlib.sha256(json.dumps(result, ensure_ascii=False, sort_keys=True).encode()).hexdigest()[:16]
     return result
 

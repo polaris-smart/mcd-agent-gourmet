@@ -1,6 +1,7 @@
 """A bounded set of complete meals, verified against live menu/detail/price."""
 
 import csv
+import copy
 import re
 from datetime import datetime, timezone
 from .mcp import MCPError
@@ -61,7 +62,48 @@ def quoted_cents(value):
     return price
 
 
-def fetch_snapshot(client, plan, on_progress=None):
+def store_coupons(client, plan):
+    value = client.call('query-store-coupons', {
+        'storeCode': plan['store']['code'], 'beType': 1, 'orderType': 1})
+    if not isinstance(value, list) or not all(isinstance(c, dict) for c in value):
+        raise MCPError('无法识别当前门店可用券结构。')
+    return value
+
+
+def coupon_choices(coupons, plan):
+    """Only titles and matching candidate IDs leave the private response."""
+    result = []
+    for coupon in coupons:
+        products = {p.get('productCode') for p in coupon.get('products', []) if isinstance(p, dict)}
+        result.append({'title': coupon.get('title', '未命名券'),
+                       'candidate_ids': [p['id'] for p in plan['candidates'] if p['product_code'] in products]})
+    return result
+
+
+def plan_with_coupon(plan, coupons, title, candidate_id):
+    matches = [c for c in coupons if c.get('title') == title]
+    if len(matches) != 1:
+        raise ValueError('券名称未找到或不唯一，请重新查询可用券；不能猜测券标识。')
+    coupon = matches[0]
+    adjusted = copy.deepcopy(plan)
+    spec = next((p for p in adjusted['candidates'] if p['id'] == candidate_id), None)
+    if spec is None:
+        raise ValueError('候选 ID 不存在。')
+    products = {p.get('productCode') for p in coupon.get('products', []) if isinstance(p, dict)}
+    if spec['product_code'] not in products:
+        raise ValueError('该券的商品与这份套餐不匹配；不会把单品券强行套用到套餐。')
+    pair = {k: coupon.get(k) for k in ('couponId', 'couponCode')}
+    if not all(isinstance(v, str) and v for v in pair.values()):
+        raise MCPError('可用券缺少成对标识，停止用券核价。')
+    spec['coupon'] = pair
+    return adjusted
+
+
+def fetch_snapshot(client, plan, on_progress=None, coupon_title=None, coupon_candidate=None):
+    if bool(coupon_title) != bool(coupon_candidate):
+        raise ValueError('用券须同时指定券名称和候选 ID。')
+    if coupon_title:
+        plan = plan_with_coupon(plan, store_coupons(client, plan), coupon_title, coupon_candidate)
     store, specs = plan["store"], plan["candidates"]
     if not 1 <= len(specs) <= 12:
         raise ValueError("一次最多核价 12 份餐单。")
@@ -70,7 +112,6 @@ def fetch_snapshot(client, plan, on_progress=None):
     base = {"storeCode": store["code"], "beType": 1, "orderType": 1}
     menu = client.call("query-meals", base)
     nutrition = nutrition_rows(client.call("list-nutrition-foods", {}))
-    client.call("query-store-coupons", base)  # Never store or publish account-specific coupons.
     details, results = {}, []
     for spec in specs:
         code = spec["product_code"]
@@ -94,7 +135,8 @@ def fetch_snapshot(client, plan, on_progress=None):
         result = {"id": spec["id"], "name": details[code]["name"], "variant": spec["label"],
                   "store_code": store["code"], "items": items, "price_cents": price,
                   "spicy": spec.get("spicy"), "nutrition_missing": missing,
-                  "coupon_applied": coupon is not None, "quote_tool": "calculate-price", **totals}
+                  "coupon_requested": coupon is not None,
+                  "coupon_applied": None if coupon else False, "quote_tool": "calculate-price", **totals}
         results.append(result)
         if on_progress:
             on_progress(result)

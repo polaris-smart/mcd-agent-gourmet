@@ -22,7 +22,7 @@ agent_created: true
 2. `query-meals`：门店 code、`beType=1, orderType=1`。到店场景不传 beCode。
 3. `query-meal-detail`：确认套餐每一轮的实际商品与数量。仅从可选项中替换。
 4. `list-nutrition-foods`：按具体餐品名称和份量匹配。缺失为未知。标准份量相加不是实际制作的精确测量。
-5. `query-store-coupons`：仅查看当前可用券，不自动领取。用券要拿到有效且成对的 couponId/couponCode，且该券要由官方核价验证；不要凭券名减钱。
+5. 用户需要用券时才调用 `query-store-coupons`：仅查看当前可用券，不自动领取。用券要拿到有效且成对的 couponId/couponCode，且该券要由官方核价验证；不要凭券名减钱。只向用户展示券名称及适配候选，协调器在内存中解析标识；不要求普通用户提供券 ID。默认不带券。
 6. `calculate-price`：每份完整候选独立核价，用 `items[].productCode`、`roundList[].round` 和 `comboItemList` 传套餐选择；应付来自返回的整数分 `price`。替换任何餐品后重新核价，不能手算差价。
 
 最多比较少量有意义的候选；说清比较范围。接口错误立即停止当前链路，标明此前结果是否完整，绝不拿 fixture 充当实时结果。
@@ -41,11 +41,14 @@ agent_created: true
 
 用表格展示每份餐单：完整明细、当次整单价格、预算余量或超额、已知营养、未满足条件、角色意见。没有满足条件的候选时明确说明。
 
+同时给出“价格与钠”“口味与钠”的取舍候选，只保留符合硬性条件、数据完整且未被另一份在两个维度同时胜过的餐单。同值并列保留，能量与蛋白质单列，不编造健康评分，不声称穷举全部菜单。
+
 用户选择前，复述门店、餐品、份数与价格。用户改变预算/偏好/餐单后，旧选择作废。记录选择不等于创建订单；后续购买由用户在官方渠道完成。
 
 ## 本地程序
 
 - `python3 demo.py`：历史快照演示，零 Token，不联网。
+- `python3 demo.py --list-coupons`：只查询券名称与匹配候选，不领券、不输出券 ID。
 - `python3 demo.py --live --plan local/my-plan.json`：用户选定门店和候选后真实核价。
 - `python3 demo.py --budget 35 --taste spicy --side fries --json`：结构化角色意见。
 - `gourmet/core.py`：完整餐单与硬性条件校验。

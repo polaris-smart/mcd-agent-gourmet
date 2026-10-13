@@ -18,7 +18,11 @@ function evaluate(data, req){
  const nutritionPick=feasible.filter(p=>p.sodium_mg!=null).sort((a,b)=>a.sodium_mg-b.sodium_mg||cheapest(a,b))[0];
  const tastePick=[...feasible].sort((a,b)=>Number(!a.taste_match)-Number(!b.taste_match)||cheapest(a,b))[0];
  const reviewers={budget:budgetPick?.id??null,nutrition:nutritionPick?.id??null,taste:tastePick?.id??null};
- return {plans,reviewers,feasible_count:feasible.length,disagreement:new Set(Object.values(reviewers).filter(Boolean)).size>1,requirements:req};
+ const known=feasible.filter(p=>p.sodium_mg!=null),tradeoffs={};
+ for(const [name,dimensions] of Object.entries({price_sodium:p=>[p.price_cents,p.sodium_mg],taste_sodium:p=>[Number(!p.taste_match),p.sodium_mg]})){
+  tradeoffs[name]=known.filter(p=>!known.some(q=>{const a=dimensions(p),b=dimensions(q);return b.every((v,i)=>v<=a[i])&&b.some((v,i)=>v<a[i]);})).sort(cheapest).map(p=>p.id);
+ }
+ return {tradeoffs,plans,reviewers,feasible_count:feasible.length,disagreement:new Set(Object.values(reviewers).filter(Boolean)).size>1,requirements:req};
 }
 if(typeof module!=='undefined'&&module.exports)module.exports={evaluate};else root.GourmetReview={evaluate};
 })(typeof window!=='undefined'?window:globalThis);

@@ -53,9 +53,18 @@ python3 demo.py --list-tools
 python3 demo.py --live --plan fixtures/plan.json --budget 35 --taste spicy
 ```
 
-程序会读取当次菜单、官方营养数据、门店可用券，再对六份完整餐单逐份 `calculate-price`。真实查询失败会停止，**不拿历史快照伪装成实时结果**。当前模板只支持到店取餐、即时三轮套餐；默认不使用优惠券。
+程序会读取当次菜单、官方营养数据，再对六份完整餐单逐份 `calculate-price`。真实查询失败会停止，**不拿历史快照伪装成实时结果**。当前模板只支持到店取餐、即时三轮套餐；默认不使用优惠券。
 
-高级用券：在私有计划文件的某一候选下提供成对的 `couponId`、`couponCode`，由官方核价接口验证；不自动领券、不枚举全部券、不保证最优用券。实际用券正向链路尚未验证，见 [验证边界](docs/validation.md)。
+### 可用券查询与按名称核价
+
+默认演示和实时核价均不带券。查询入口只显示券名称及适配的候选 ID，不要求用户知道券 ID：
+
+```bash
+python3 demo.py --list-coupons --plan fixtures/plan.json
+python3 demo.py --live --coupon-title '查询返回的完整券名称' --coupon-candidate chicken-classic
+```
+
+`candidate_ids` 为空表示这张券不匹配当前六份套餐；单品券不会硬套到套餐。名称重复、商品不匹配或券标识缺失均停止。程序只在内存中解析成对标识并交给官方核价，不自动领券。传入券不代表已获优惠，只有官方报价可作为价格依据；真实用券成功链路尚未验证。高级用户仍可在私有计划文件显式提供成对字段。
 
 ```bash
 python3 demo.py --live --plan local/my-plan.json --save-snapshot local/quotes.json
@@ -81,6 +90,14 @@ python3 demo.py --live --plan local/my-plan.json --save-snapshot local/quotes.js
 ```
 
 **实现说明：** Python 和网页是三个确定性规则审阅器，不是三个独立大模型。`SKILL.md` 定义了 AI 客户端中的角色协作流程：支持独立子任务的客户端可分角色审阅相同的事实包；不支持时顺序审阅并明确说明。两种方式都不能让角色编造价格、营养数据或擅自下单。
+
+## 同时比较两个维度
+
+网页和 CLI 提供“价格与钠”“口味与钠”两组取舍候选。在满足所有硬性条件、钠数据完整的餐单中，保留没有被另一份同时胜过的选项；同值并列保留，不加秘密权重。能量、蛋白质单列展示，不计算没有依据的 0–100 健康分数。
+
+例如默认快照中，“价格与钠”保留 ¥32.00 / 1053 mg 和 ¥32.50 / 592 mg 两种选择；“口味与钠”保留辣味餐与钠更少的非辣餐。只比较已逐份核价的有限候选，尚未穷举全菜单组合。
+
+[后续改进清单](docs/backlog.md) 记录偏好矩阵、门店体验和组合扩展。
 
 ## 我们具体解决什么
 

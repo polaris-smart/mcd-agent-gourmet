@@ -21,11 +21,13 @@
 </section>
 <section class="workbench" aria-labelledby="compare-title">
 <div class="section-head"><div><h2 id="compare-title">把你的条件摆上桌</h2><p>试着改一项，看看谁会改变主意。</p></div><button class="quiet" id="reset" type="button">重置条件 <span aria-hidden="true">↺</span></button></div>
+<p id="data-notice" class="data-notice"></p>
 <form id="controls" class="controls">
 <div class="budget-control"><label for="budget">这餐预算 <span>元</span></label><div class="budget-input"><span aria-hidden="true">¥</span><input id="budget" type="number" value="35" min="1" max="10000" step="0.01" required inputmode="decimal" aria-describedby="budget-error"></div><div class="presets" aria-label="快捷预算"><button type="button" data-budget="30">30</button><button type="button" data-budget="35">35</button><button type="button" data-budget="40">40</button><button type="button" data-budget="50">50</button></div><span id="budget-error" class="error" role="alert"></span></div>
 <div><label for="taste">口味态度</label><select id="taste"><option value="spicy" selected>想吃辣 · 偏好</option><option value="any">都可以</option><option value="no-spicy">不吃辣 · 必须满足</option></select><label class="check" for="fries"><input id="fries" type="checkbox">小食一定要薯条</label></div>
 <div><label for="sodium">这餐的钠上限 <span>mg</span></label><select id="sodium" aria-describedby="sodium-note"><option value="">暂不设置</option><option value="800">800 mg</option><option value="1200">1200 mg</option><option value="1500">1500 mg</option></select><p class="field-note" id="sodium-note">只是你的筛选条件，<br>不是健康标准或医学建议。</p></div>
 </form>
+<section class="strategy" aria-labelledby="strategy-title"><h3 id="strategy-title">想同时顾及两件事？</h3><label for="strategy">比较角度</label><select id="strategy"><option value="price_sodium">价格与钠含量</option><option value="taste_sodium">口味偏好与钠含量</option></select><p class="field-note">只比较符合硬性条件、钠数据完整的候选。保留有取舍的选项：没有另一份在这两个维度都不差、且至少一项更好。能量和蛋白质另列，不换算成健康分数。</p><div id="tradeoffs" aria-live="polite"></div></section>
 <div class="result-heading"><p id="result-summary" role="status"></p><span>价格 · 营养 · 取舍，一起看</span></div>
 <p id="empty-message" class="empty" hidden></p>
 <div class="table-scroll"><table><caption class="sr-only">六份候选餐单比较；全部金额来自历史官方核价</caption><thead><tr><th scope="col">完整餐单</th><th scope="col">当次整单核价</th><th scope="col">营养数据合计</th><th scope="col">这份的取舍</th><th scope="col"><span class="sr-only">选择餐单</span></th></tr></thead><tbody id="plans"></tbody></table></div>

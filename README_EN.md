@@ -25,3 +25,9 @@ Live calls use the official menu, combo details, nutrition table and `calculate-
 The Python/browser reviewers are deterministic functions, **not three independent LLMs**. The accompanying `SKILL.md` describes how an AI client can delegate independent reviews of the same verified facts. The executable client only allows read/query/price tools.
 
 Independent M-CODE 2026 entry. Not an official McDonald's product. MIT for original code; official materials retain their applicable terms. If you find the approach useful, a Star or actionable issue is welcome.
+
+## v0.2.1: clearer provenance and trade-offs
+
+The CLI prints source, store and timestamp to stderr even with JSON output. The web demo prominently labels historical prices. Price/sodium and taste/sodium comparisons retain non-dominated, eligible candidates with known sodium; energy and protein remain visible rather than being converted to an unsupported health score. These are six quoted candidates, not an exhaustive menu search.
+
+Run `python3 demo.py --list-coupons` to see coupon titles and matching candidate IDs. The explicit live flags `--coupon-title` and `--coupon-candidate` resolve private identifiers in memory; ambiguous names and product mismatches stop. No coupon is used by default. Successful live coupon pricing remains unverified.
