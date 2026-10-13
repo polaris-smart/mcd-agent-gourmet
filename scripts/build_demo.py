@@ -5,11 +5,17 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from gourmet.core import validate_snapshot
-p = validate_snapshot(json.loads((ROOT / 'fixtures/snapshot.json').read_text(encoding='utf-8')))
-if p['mode'] != 'snapshot':
-    raise SystemExit('Only historical snapshots can be bundled into the public demo.')
-extra = validate_snapshot(json.loads((ROOT / 'fixtures/customized-snapshot.json').read_text(encoding='utf-8')))
-if extra['mode'] != 'snapshot':
-    raise SystemExit('Only historical snapshots can be bundled into the public demo.')
-(ROOT / 'docs/data.js').write_text('window.GOURMET_SNAPSHOTS = ' + json.dumps([p,extra],ensure_ascii=False,indent=2).replace('</','<\\/') + ';\nwindow.GOURMET_DATA = window.GOURMET_SNAPSHOTS[0];\n',encoding='utf-8')
-print('Built docs/data.js from fixtures/snapshot.json')
+manifest = json.loads((ROOT / 'fixtures/demo-snapshots.json').read_text(encoding='utf-8'))
+snapshots = []
+for filename in manifest:
+    path = (ROOT / 'fixtures' / filename).resolve()
+    if path.parent != (ROOT / 'fixtures').resolve():
+        raise ValueError('Demo sources must be explicitly listed public fixtures.')
+    snapshot = validate_snapshot(json.loads(path.read_text(encoding='utf-8')))
+    if snapshot['mode'] != 'snapshot':
+        raise SystemExit('Only historical snapshots can be bundled into the public demo.')
+    snapshots.append(snapshot)
+if not snapshots:
+    raise ValueError('At least one public snapshot is required.')
+(ROOT / 'docs/data.js').write_text('window.GOURMET_SNAPSHOTS = ' + json.dumps(snapshots,ensure_ascii=False,indent=2).replace('</','<\\/') + ';\nwindow.GOURMET_DATA = window.GOURMET_SNAPSHOTS[0];\n',encoding='utf-8')
+print('Built docs/data.js from %d public snapshots' % len(snapshots))

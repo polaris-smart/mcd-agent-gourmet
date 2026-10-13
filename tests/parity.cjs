@@ -1,5 +1,5 @@
 const fs=require('node:fs'),cp=require('node:child_process'),assert=require('node:assert/strict');
-const {evaluate}=require('../docs/review.js');const files=['fixtures/snapshot.json','fixtures/customized-snapshot.json'];
+const {evaluate}=require('../docs/review.js');const files=JSON.parse(fs.readFileSync('fixtures/demo-snapshots.json','utf8')).map(name=>'fixtures/'+name);
 const cases=[];for(const budget of [1,30,32,32.5,33.5,35,50])for(const taste of ['any','spicy','no-spicy'])for(const sodium of [null,800,1200,1500])for(const side of ['any','fries'])for(const sugar of ['any','zero','regular'])for(const energy_limit of [null,600])for(const protein_min of [null,25])for(const ice of ['any','none','less'])cases.push({ice,budget_cents:Math.round(budget*100),taste,sodium_limit:sodium,side,sugar,energy_limit,protein_min});
 for(const file of files){
 const data=JSON.parse(fs.readFileSync(file,'utf8'));

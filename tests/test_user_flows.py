@@ -57,6 +57,31 @@ class Preferences(unittest.TestCase):
             self.assertEqual(demo.main(['--store-code','123']),2)
             self.assertEqual(demo.main(['--expand']),2)
 
+    def test_live_store_without_meal_never_loads_demo_candidates(self):
+        with patch('demo.Client') as client, redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):
+            self.assertEqual(demo.main(['--live', '--store-code', '1990133']), 2)
+        client.assert_not_called()
+
+    def test_switching_plan_store_requires_fresh_meal_selection(self):
+        with patch('demo.Client') as client, redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):
+            self.assertEqual(demo.main(['--live', '--plan', str(ROOT/'fixtures/plan.json'), '--store-code', '1990133']), 2)
+        client.assert_not_called()
+
+    def test_menu_search_uses_only_requested_store(self):
+        c=Mock();c.call.return_value={'meals':{'new-code':{'name':'当前餐品'}}}
+        out=io.StringIO()
+        with patch('demo.Client',return_value=c), redirect_stdout(out), redirect_stderr(io.StringIO()):
+            self.assertEqual(demo.main(['--list-meals', '--store-code', '1990133']), 0)
+        self.assertEqual(c.call.call_args.args, ('query-meals', {'storeCode':'1990133','beType':1,'orderType':1}))
+        self.assertEqual(json.loads(out.getvalue())['meals'], [{'code':'new-code','name':'当前餐品'}])
+
+    def test_switching_delivery_store_never_keeps_old_business_code(self):
+        plan=json.loads((ROOT/'fixtures/plan.json').read_text())
+        plan['fulfillment']={'channel':'delivery','be_code':'old-store-pair'}
+        with patch('demo.Path.read_text',return_value=json.dumps(plan)), patch('demo.Client') as client, redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):
+            self.assertEqual(demo.main(['--live','--plan','unused.json','--store-code','1990133','--meal-code','123']),2)
+        client.assert_not_called()
+
 class LiveCombos(unittest.TestCase):
     def setUp(self):
         self.detail={'code':'meal','name':'测试三件套','rounds':[

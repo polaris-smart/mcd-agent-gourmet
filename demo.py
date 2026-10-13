@@ -15,7 +15,7 @@ ROOT = Path(__file__).resolve().parent
 def main(argv=None):
     parser = argparse.ArgumentParser(description='麦门点餐议事会：完整餐单，透明取舍。')
     parser.add_argument('--budget', default='35', help='预算（元），默认 35')
-    parser.add_argument('--taste', choices=['any', 'spicy', 'no-spicy'], default='spicy')
+    parser.add_argument('--taste', choices=['any', 'spicy', 'no-spicy'], default='any')
     parser.add_argument('--side', choices=['any', 'fries'], default='any')
     parser.add_argument('--sodium-limit', type=int, help='自定义钠上限 mg；不是医学建议')
     parser.add_argument('--live', action='store_true', help='使用本机 MCD_MCP_TOKEN 实时核价')
@@ -93,10 +93,14 @@ def main(argv=None):
         if args.live or args.list_coupons or args.list_meals:
             if not args.store_code and args.plan is None:
                 raise ValueError('请先选门店：--search-stores --city 城市 --keyword 地点，然后用 --store-code 编码；或显式指定已确认的 --plan 文件。')
-            plan = json.loads((args.plan or ROOT / 'fixtures/plan.json').read_text(encoding='utf-8'))
+            plan = json.loads(args.plan.read_text(encoding='utf-8')) if args.plan else {'candidates': []}
             if args.store_code:
                 if not args.store_code.isdigit():
                     raise ValueError('门店编码必须是数字字符串。')
+                if args.plan and plan.get('store', {}).get('code') != args.store_code and plan.get('candidates') and not args.meal_code:
+                    raise ValueError('切换计划门店时请重新用 --meal-code 选择当前菜单餐品；不继承旧门店的餐品或优惠券。')
+                if args.plan and plan.get('store', {}).get('code') != args.store_code and plan.get('fulfillment', {}).get('channel', 'pickup') != 'pickup' and (args.channel == 'pickup' or not args.business_code):
+                    raise ValueError('切换配送或得来速门店时必须重新明确 --channel 和成对 --business-code，不沿用旧业务编码。')
                 plan['store'] = {'code':args.store_code, 'name':'所选门店 '+args.store_code}
             if args.channel != 'pickup' or args.business_code:
                 plan['fulfillment'] = {'channel':args.channel, 'be_code':args.business_code}
@@ -104,6 +108,8 @@ def main(argv=None):
                 if len(set(args.meal_code)) != len(args.meal_code) or len(args.meal_code) > 3 or not all(c.isdigit() for c in args.meal_code):
                     raise ValueError('请选择最多 3 个不同的有效套餐编码。')
                 plan['candidates'] = [{'id':code,'product_code':code,'label':'当次默认搭配'} for code in args.meal_code]
+            if args.live and not plan.get('candidates'):
+                raise ValueError('请先用 --list-meals --store-code 编码 查看当次菜单，再用 --meal-code 选择套餐；不自动套用演示餐品。')
             print('本轮所选门店：%s（%s）' % (plan['store']['name'], plan['store']['code']), file=sys.stderr)
         if args.meal_code and not (args.live or args.list_coupons):
             raise ValueError('--meal-code 只用于实时核价或匹配门店券。')
