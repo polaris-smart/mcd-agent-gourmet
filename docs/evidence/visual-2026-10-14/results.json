@@ -1,0 +1,115 @@
+{
+  "desktop": {
+    "httpStatus": 200,
+    "initial": {
+      "viewport": 1440,
+      "documentWidth": 1440,
+      "title": "麦门点餐议事会 · 按你的口味，算清这一餐。",
+      "budget": "35",
+      "sample": "0",
+      "sugar": "any",
+      "dataNotice": "当前为历史快照演示，非实时价格。麦当劳南京天元东路餐厅 · 2026/10/14 00:49:08（北京时间）。实时核价请使用 WorkBuddy 或本机 CLI。",
+      "resultSummary": "4 份完整餐单 · 4 份符合当前硬性条件",
+      "visibleRows": 4,
+      "smallButtons": []
+    },
+    "pageErrors": [],
+    "firstFocus": {
+      "tag": "A",
+      "className": "skip",
+      "text": "跳到餐单条件"
+    },
+    "budget30": {
+      "viewport": 1440,
+      "documentWidth": 1440,
+      "title": "麦门点餐议事会 · 按你的口味，算清这一餐。",
+      "budget": "30",
+      "sample": "0",
+      "sugar": "any",
+      "dataNotice": "当前为历史快照演示，非实时价格。麦当劳南京天元东路餐厅 · 2026/10/14 00:49:08（北京时间）。实时核价请使用 WorkBuddy 或本机 CLI。",
+      "resultSummary": "4 份完整餐单 · 0 份符合当前硬性条件",
+      "visibleRows": 4,
+      "smallButtons": []
+    },
+    "regularNoSpicy": {
+      "viewport": 1440,
+      "documentWidth": 1440,
+      "title": "麦门点餐议事会 · 按你的口味，算清这一餐。",
+      "budget": "35",
+      "sample": "0",
+      "sugar": "regular",
+      "dataNotice": "当前为历史快照演示，非实时价格。麦当劳南京天元东路餐厅 · 2026/10/14 00:49:08（北京时间）。实时核价请使用 WorkBuddy 或本机 CLI。",
+      "resultSummary": "4 份完整餐单 · 1 份符合当前硬性条件",
+      "visibleRows": 1,
+      "smallButtons": []
+    },
+    "secondSample": {
+      "viewport": 1440,
+      "documentWidth": 1440,
+      "title": "麦门点餐议事会 · 按你的口味，算清这一餐。",
+      "budget": "35",
+      "sample": "1",
+      "sugar": "regular",
+      "dataNotice": "当前为历史快照演示，非实时价格。麦当劳南京洪武餐厅 · 2026/10/14 00:05:17（北京时间）。实时核价请使用 WorkBuddy 或本机 CLI。",
+      "resultSummary": "4 份完整餐单 · 1 份符合当前硬性条件",
+      "visibleRows": 1,
+      "smallButtons": []
+    },
+    "afterReset": {
+      "viewport": 1440,
+      "documentWidth": 1440,
+      "title": "麦门点餐议事会 · 按你的口味，算清这一餐。",
+      "budget": "35",
+      "sample": "1",
+      "sugar": "any",
+      "dataNotice": "当前为历史快照演示，非实时价格。麦当劳南京洪武餐厅 · 2026/10/14 00:05:17（北京时间）。实时核价请使用 WorkBuddy 或本机 CLI。",
+      "resultSummary": "4 份完整餐单 · 4 份符合当前硬性条件",
+      "visibleRows": 4,
+      "smallButtons": []
+    },
+    "receiptVisibleAfterChoice": true,
+    "receiptHiddenAfterConditionChange": true
+  },
+  "mobile": {
+    "httpStatus": 200,
+    "initial": {
+      "viewport": 390,
+      "documentWidth": 390,
+      "title": "麦门点餐议事会 · 按你的口味，算清这一餐。",
+      "budget": "35",
+      "sample": "0",
+      "sugar": "any",
+      "dataNotice": "当前为历史快照演示，非实时价格。麦当劳南京天元东路餐厅 · 2026/10/14 00:49:08（北京时间）。实时核价请使用 WorkBuddy 或本机 CLI。",
+      "resultSummary": "4 份完整餐单 · 4 份符合当前硬性条件",
+      "visibleRows": 4,
+      "smallButtons": []
+    },
+    "pageErrors": [],
+    "firstFocus": {
+      "tag": "A",
+      "className": "skip",
+      "text": "跳到餐单条件"
+    }
+  },
+  "narrow": {
+    "httpStatus": 200,
+    "initial": {
+      "viewport": 320,
+      "documentWidth": 320,
+      "title": "麦门点餐议事会 · 按你的口味，算清这一餐。",
+      "budget": "35",
+      "sample": "0",
+      "sugar": "any",
+      "dataNotice": "当前为历史快照演示，非实时价格。麦当劳南京天元东路餐厅 · 2026/10/14 00:49:08（北京时间）。实时核价请使用 WorkBuddy 或本机 CLI。",
+      "resultSummary": "4 份完整餐单 · 4 份符合当前硬性条件",
+      "visibleRows": 4,
+      "smallButtons": []
+    },
+    "pageErrors": [],
+    "firstFocus": {
+      "tag": "A",
+      "className": "skip",
+      "text": "跳到餐单条件"
+    }
+  }
+}

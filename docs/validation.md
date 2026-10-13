@@ -1,5 +1,12 @@
 # 验证记录
 
+## 网页视觉与交互验收·2026-10-14
+
+- **已执行：公开页面浏览器验收。** Pages 部署 `01bac997` 成功后，以隔离的 headless Google Chrome 打开 `https://polaris-smart.github.io/mcd-agent-gourmet/`，桌面 1440×900、手机视口 390×844、最窄 320×700 均返回 HTTP 200。完整截图分别见 [桌面](evidence/visual-2026-10-14/desktop.png)、[390px 手机视口](evidence/visual-2026-10-14/mobile.png)、[320px 最窄视口](evidence/visual-2026-10-14/narrow.png)；结构化结果见 [results.json](evidence/visual-2026-10-14/results.json)。三种视口均无页面 JavaScript 异常、无文档横向溢出；此次检查的可见按钮和主操作链接尺寸均不小于 44px。Tab 首项为“跳到餐单条件”链接。
+- **已执行：关键交互。** 35 元默认显示 4 份符合条件的餐单；改为 30 元后符合数为 0；选择有糖可乐且一定不辣后为 1。切换演示门店同步更新门店名称和历史核价时间；重置条件恢复糖类为“都可以”。选择餐单后收据出现，修改预算后旧收据隐藏。320px 截图确认“重置条件”文字和符号保持同一行。
+- **边界。** 截图是桌面 Chrome 的模拟视口，并非实体手机触控测试；未在本轮验证剪贴板授权失败路径、屏幕阅读器或所有浏览器组合。此前浏览器连接失败的记录只描述当时那一轮，不再代表当前页面的视觉验收状态。
+- **分发核对。** GitHub Release v0.3.2 ZIP 的公开下载计数在本次查询时为 0；这不能推断无人导入，因为用户已经从本地 ZIP 在 WorkBuddy v0.3.2 完成安装、启用和离线演示（见 `workbuddy.md`）。第三方或新机器导入仍未验证；当前已决定暂不上架 WorkBuddy 市场。
+
 ## 0.3.2 文案与回归修正 · 2026-10-14
 
 - **已执行：WorkBuddy 客户端离线验收。** v0.3.2 导入本机，已安装列表显示启用；附加 Skill 的对话报告运行 `python3 scripts/demo.py --coupon-demo --json`，退出码 0、stderr 为空，合法 JSON 包含 6 张构造券及 `mode: synthetic`。这是客户端界面显示的运行回报，覆盖离线演示；真实 MCP 端到端对话与市场上架仍未验证，详情见 `workbuddy.md`。
