@@ -104,7 +104,7 @@ agent_created: true
 - `python3 demo.py`：历史快照演示，零 Token，不联网。
 - `python3 demo.py --list-coupons --plan fixtures/plan.json`：只查询券名称与匹配候选，不领券、不输出券 ID。
 - `python3 demo.py --live --plan local/my-plan.json`：用户选定门店和候选后真实核价。
-- `python3 demo.py --budget 35 --taste spicy --side fries --json`：结构化角色意见。
+- `python3 demo.py --budget 35 --taste spicy --side fries --json`：结构化比较结果。
 - `python3 demo.py --search-stores --city 南京 --keyword 新街口`：按地点搜索到店门店；`--channel drive` 查询得来速。
 - `python3 demo.py --list-meals --store-code 门店编码`：当前菜单；`--meal-code 编码` 选择最多三种套餐，不再限定原样例。
 - `python3 demo.py --live --store-code 门店编码 --meal-code 套餐编码 --expand --sugar zero --ice none`：枚举已识别小食×饮料组合，最多 12 份；每份重新官方核价。用当前官方特调 key 处理去冰。数字编码由协调器从工具结果带入，不让普通用户查 ID。

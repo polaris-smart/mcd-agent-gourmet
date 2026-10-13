@@ -23,6 +23,19 @@ class Tradeoffs(unittest.TestCase):
         self.assertEqual(review(self.data, budget_cents=3000)['tradeoffs']['price_sodium'], [])
         for p in self.data['plans']: p['sodium_mg'] = None
         self.assertEqual(review(self.data)['tradeoffs'], {'price_sodium':[], 'taste_sodium':[], 'nutrition_multi':[]})
+    def test_four_dimensions_reject_dominated_and_incomplete_candidates(self):
+        base = copy.deepcopy(self.data['plans'][0])
+        cases = [('a',2000,500,600,30), ('b',2000,600,650,20),
+                 ('c',1900,700,700,40), ('missing',2100,400,None,40)]
+        self.data['plans'] = [dict(copy.deepcopy(base), id=name, price_cents=price,
+                                  sodium_mg=sodium, energy_kcal=energy, protein_g=protein)
+                              for name,price,sodium,energy,protein in cases]
+        result = review(self.data)['tradeoffs']
+        # a dominates b at equal price; c trades lower price/more protein for
+        # higher sodium/energy; missing energy must not enter the 4-D comparison.
+        self.assertEqual(result['nutrition_multi'], ['c','a'])
+        for ids in result.values():
+            self.assertEqual(len(ids), len(set(ids)))
     def test_equal_candidates_remain(self):
         p = copy.deepcopy(self.data['plans'][-1]); p['id']='equal-fish'; self.data['plans'].append(p)
         self.assertIn('equal-fish', review(self.data)['tradeoffs']['price_sodium'])
