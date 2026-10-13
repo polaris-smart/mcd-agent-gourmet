@@ -18,3 +18,8 @@ Thumbs.db
 # IDE
 .vscode/
 .idea/
+
+# Local MCP plans, raw responses, credentials and browser artifacts
+local/
+*.private.json
+*.webm

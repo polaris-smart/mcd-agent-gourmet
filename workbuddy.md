@@ -1,3 +1,5 @@
+> 2026-10-13 修订说明：以下为仓库原有的 WorkBuddy 开发记录，按历史材料保留。其“并行”“真实 fixture”“审批链验证”等说法未在本次重新核验，不能作为 v0.2.0 的测试证据。本次修订使用 Codex 辅助，实测结果见 docs/validation.md；不将本次工作冒充 WorkBuddy 对话。
+
 # WorkBuddy 开发对话上下文
 
 > 本文件记录使用腾讯 WorkBuddy 开发 mcd-agent-gourmet 的对话上下文，

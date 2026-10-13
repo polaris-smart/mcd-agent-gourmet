@@ -1,0 +1,234 @@
+window.GOURMET_DATA = {
+  "mode": "snapshot",
+  "store": {
+    "code": "1990622",
+    "name": "麦当劳南京东城汇餐厅"
+  },
+  "captured_at": "2026-10-13T14:14:10+00:00",
+  "source": "麦当劳官方 MCP：calculate-price + list-nutrition-foods",
+  "scope": "仅比较本轮候选；不保证全菜单最低价；营养为标准份量的单品加总。",
+  "plans": [
+    {
+      "id": "chicken-classic",
+      "name": "麦辣鸡腿汉堡三件套",
+      "variant": "中薯条 · 可乐",
+      "store_code": "1990622",
+      "items": [
+        {
+          "code": "1440",
+          "name": "麦辣鸡腿汉堡",
+          "quantity": 1,
+          "kind": "main",
+          "is_fries": false
+        },
+        {
+          "code": "4810",
+          "name": "中薯条",
+          "quantity": 1,
+          "kind": "side",
+          "is_fries": true
+        },
+        {
+          "code": "3050",
+          "name": "可乐中杯",
+          "quantity": 1,
+          "kind": "drink",
+          "is_fries": false
+        }
+      ],
+      "price_cents": 3350,
+      "spicy": true,
+      "nutrition_missing": [],
+      "coupon_applied": false,
+      "quote_tool": "calculate-price",
+      "energy_kcal": 921.0,
+      "sodium_mg": 1373.0,
+      "protein_g": 28.0
+    },
+    {
+      "id": "chicken-corn",
+      "name": "麦辣鸡腿汉堡三件套",
+      "variant": "玉米杯 · 无糖可乐",
+      "store_code": "1990622",
+      "items": [
+        {
+          "code": "1440",
+          "name": "麦辣鸡腿汉堡",
+          "quantity": 1,
+          "kind": "main",
+          "is_fries": false
+        },
+        {
+          "code": "4437",
+          "name": "小杯玉米杯",
+          "quantity": 1,
+          "kind": "side",
+          "is_fries": false
+        },
+        {
+          "code": "3071",
+          "name": "无糖可口可乐中杯",
+          "quantity": 1,
+          "kind": "drink",
+          "is_fries": false
+        }
+      ],
+      "price_cents": 3200,
+      "spicy": true,
+      "nutrition_missing": [],
+      "coupon_applied": false,
+      "quote_tool": "calculate-price",
+      "energy_kcal": 538.0,
+      "sodium_mg": 1244.0,
+      "protein_g": 26.0
+    },
+    {
+      "id": "cheese-classic",
+      "name": "双层吉士汉堡中套餐",
+      "variant": "中薯条 · 可乐",
+      "store_code": "1990622",
+      "items": [
+        {
+          "code": "1120",
+          "name": "双层吉士汉堡",
+          "quantity": 1,
+          "kind": "main",
+          "is_fries": false
+        },
+        {
+          "code": "4810",
+          "name": "中薯条",
+          "quantity": 1,
+          "kind": "side",
+          "is_fries": true
+        },
+        {
+          "code": "3050",
+          "name": "可乐中杯",
+          "quantity": 1,
+          "kind": "drink",
+          "is_fries": false
+        }
+      ],
+      "price_cents": 3350,
+      "spicy": false,
+      "nutrition_missing": [],
+      "coupon_applied": false,
+      "quote_tool": "calculate-price",
+      "energy_kcal": 865.0,
+      "sodium_mg": 1182.0,
+      "protein_g": 31.0
+    },
+    {
+      "id": "cheese-corn",
+      "name": "双层吉士汉堡中套餐",
+      "variant": "玉米杯 · 无糖可乐",
+      "store_code": "1990622",
+      "items": [
+        {
+          "code": "1120",
+          "name": "双层吉士汉堡",
+          "quantity": 1,
+          "kind": "main",
+          "is_fries": false
+        },
+        {
+          "code": "4437",
+          "name": "小杯玉米杯",
+          "quantity": 1,
+          "kind": "side",
+          "is_fries": false
+        },
+        {
+          "code": "3071",
+          "name": "无糖可口可乐中杯",
+          "quantity": 1,
+          "kind": "drink",
+          "is_fries": false
+        }
+      ],
+      "price_cents": 3200,
+      "spicy": false,
+      "nutrition_missing": [],
+      "coupon_applied": false,
+      "quote_tool": "calculate-price",
+      "energy_kcal": 482.0,
+      "sodium_mg": 1053.0,
+      "protein_g": 29.0
+    },
+    {
+      "id": "fish-classic",
+      "name": "麦香鱼中套餐",
+      "variant": "中薯条 · 可乐",
+      "store_code": "1990622",
+      "items": [
+        {
+          "code": "1600",
+          "name": "麦香鱼",
+          "quantity": 1,
+          "kind": "main",
+          "is_fries": false
+        },
+        {
+          "code": "4810",
+          "name": "中薯条",
+          "quantity": 1,
+          "kind": "side",
+          "is_fries": true
+        },
+        {
+          "code": "3050",
+          "name": "可乐中杯",
+          "quantity": 1,
+          "kind": "drink",
+          "is_fries": false
+        }
+      ],
+      "price_cents": 3400,
+      "spicy": false,
+      "nutrition_missing": [],
+      "coupon_applied": false,
+      "quote_tool": "calculate-price",
+      "energy_kcal": 761.0,
+      "sodium_mg": 721.0,
+      "protein_g": 20.0
+    },
+    {
+      "id": "fish-corn",
+      "name": "麦香鱼中套餐",
+      "variant": "玉米杯 · 无糖可乐",
+      "store_code": "1990622",
+      "items": [
+        {
+          "code": "1600",
+          "name": "麦香鱼",
+          "quantity": 1,
+          "kind": "main",
+          "is_fries": false
+        },
+        {
+          "code": "4437",
+          "name": "小杯玉米杯",
+          "quantity": 1,
+          "kind": "side",
+          "is_fries": false
+        },
+        {
+          "code": "3071",
+          "name": "无糖可口可乐中杯",
+          "quantity": 1,
+          "kind": "drink",
+          "is_fries": false
+        }
+      ],
+      "price_cents": 3250,
+      "spicy": false,
+      "nutrition_missing": [],
+      "coupon_applied": false,
+      "quote_tool": "calculate-price",
+      "energy_kcal": 378.0,
+      "sodium_mg": 592.0,
+      "protein_g": 18.0
+    }
+  ]
+};

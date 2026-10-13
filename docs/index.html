@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="省钱、口味、营养数据意见不一时，你来拍板。六份真实核价的麦当劳餐单，免安装体验三角色决策。">
+<meta name="theme-color" content="#aa2369">
+<meta property="og:title" content="今天这餐，听谁的？｜麦门点餐议事会">
+<meta property="og:description" content="三个角色，六份真实核价餐单，一张看得懂的对比表。历史快照，免 Token 体验。">
+<meta property="og:image" content="https://polaris-smart.github.io/mcd-agent-gourmet/assets/social.png">
+<title>麦门点餐议事会 · 今天这餐，听谁的？</title>
+<link rel="icon" href="assets/mark.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css">
+<script defer src="data.js"></script><script defer src="review.js"></script><script defer src="app.js"></script>
+</head>
+<body>
+<a class="skip" href="#controls">跳到餐单条件</a>
+<header class="site-header wrap"><a class="brand" href="./"><img src="assets/mark.svg" alt="" width="32" height="32"><span>麦门<span class="brand-sub">点餐议事会</span></span></a><nav aria-label="主导航"><a href="#how">如何决策</a><a class="repo-link" href="https://github.com/polaris-smart/mcd-agent-gourmet" target="_blank" rel="noopener noreferrer">GitHub · 支持作品 <span aria-hidden="true">↗</span></a></nav></header>
+<main class="wrap">
+<section class="intro" aria-labelledby="title">
+<div class="intro-copy"><p class="snapshot-badge"><span aria-hidden="true">●</span> 真实核价的历史快照 · 免 Token 体验</p><h1 id="title">今天这餐，<br>听谁的<span class="question-mark">？</span></h1><p class="lead">预算师想省一点，口味师想吃过瘾，<br class="desktop-break">营养观察员想把数据看清楚。<strong>最后，你来拍板。</strong></p><p class="intro-note">一份主食 + 一份小食 + 一杯饮料。<br>先是一顿完整的饭，再谈怎么选。</p></div>
+<div class="council" aria-labelledby="council-title"><div class="council-heading"><h2 id="council-title">这次，他们怎么说</h2><span class="small-tag">3 个角色</span></div><div id="voices"></div><p class="consensus" id="consensus" aria-live="polite"></p></div>
+</section>
+<section class="workbench" aria-labelledby="compare-title">
+<div class="section-head"><div><h2 id="compare-title">把你的条件摆上桌</h2><p>试着改一项，看看谁会改变主意。</p></div><button class="quiet" id="reset" type="button">重置条件 <span aria-hidden="true">↺</span></button></div>
+<form id="controls" class="controls">
+<div class="budget-control"><label for="budget">这餐预算 <span>元</span></label><div class="budget-input"><span aria-hidden="true">¥</span><input id="budget" type="number" value="35" min="1" max="10000" step="0.01" required inputmode="decimal" aria-describedby="budget-error"></div><div class="presets" aria-label="快捷预算"><button type="button" data-budget="30">30</button><button type="button" data-budget="35">35</button><button type="button" data-budget="40">40</button><button type="button" data-budget="50">50</button></div><span id="budget-error" class="error" role="alert"></span></div>
+<div><label for="taste">口味态度</label><select id="taste"><option value="spicy" selected>想吃辣 · 偏好</option><option value="any">都可以</option><option value="no-spicy">不吃辣 · 必须满足</option></select><label class="check" for="fries"><input id="fries" type="checkbox">小食一定要薯条</label></div>
+<div><label for="sodium">这餐的钠上限 <span>mg</span></label><select id="sodium" aria-describedby="sodium-note"><option value="">暂不设置</option><option value="800">800 mg</option><option value="1200">1200 mg</option><option value="1500">1500 mg</option></select><p class="field-note" id="sodium-note">只是你的筛选条件，<br>不是健康标准或医学建议。</p></div>
+</form>
+<div class="result-heading"><p id="result-summary" role="status"></p><span>价格 · 营养 · 取舍，一起看</span></div>
+<p id="empty-message" class="empty" hidden></p>
+<div class="table-scroll"><table><caption class="sr-only">六份候选餐单比较；全部金额来自历史官方核价</caption><thead><tr><th scope="col">完整餐单</th><th scope="col">当次整单核价</th><th scope="col">营养数据合计</th><th scope="col">这份的取舍</th><th scope="col"><span class="sr-only">选择餐单</span></th></tr></thead><tbody id="plans"></tbody></table></div>
+<div class="source-line"><span id="source"></span><a href="https://github.com/polaris-smart/mcd-agent-gourmet/blob/main/docs/validation.md" target="_blank" rel="noopener noreferrer">查看实测记录 ↗</a></div>
+</section>
+<section id="receipt" class="receipt" hidden aria-labelledby="receipt-title" tabindex="-1"><div><p class="receipt-kicker">你的选择</p><h2 id="receipt-title">餐单已选好，还没有下单。</h2><p id="chosen"></p><p class="field-note">这是历史快照中的选择。实际购买请在官方渠道重新确认门店、价格与供应。</p></div><button id="copy" class="primary" type="button">复制我的餐单</button></section>
+<p id="selection-message" class="selection-message" role="status"></p>
+<section id="how" class="how" aria-labelledby="how-title"><div><h2 id="how-title">有分歧，才值得讨论。</h2><p>这里不会把“最便宜”“钠更少”“我想吃”<br>悄悄混成一个看不懂的分数。</p><a href="https://github.com/polaris-smart/mcd-agent-gourmet#在-workbuddy-里使用" class="text-link">把技能带到 WorkBuddy ↗</a></div><dl><div><dt>预算师</dt><dd>在满足硬性条件的餐单里，找当次整单报价较低的选项。不为用券劝你多买。</dd></div><div><dt>营养观察员</dt><dd>比较已知的钠含量，同时展示能量。数据缺失就说未知，不把低热量等同于均衡。</dd></div><div><dt>口味师</dt><dd>优先照顾你想吃的口味。“不吃辣”会严格排除，“想吃辣”保留选择空间。</dd></div></dl></section>
+<details class="method"><summary>数据、实现与使用边界</summary><p><a href="assets/demo.mp4">观看 35 秒实际页面操作演示（静音）</a></p><p>网页在本地比较六份历史核价餐单，不连接你的麦当劳账号，不收集 Token。三个角色是可检查的规则审阅器，不冒充三个独立大模型。配套 Skill 可由支持子任务的 AI 客户端组织角色审阅。</p><p>营养数值来自官方标准份量单品表的加总，实际制作可能不同；辣味标签由模板明确指定，不代表过敏原判断。比较范围仅为这六份餐单，不保证全菜单最低价。网页没有下单、支付或领券功能，也没有分析追踪器。</p><p>历史快照不可作为当前报价。使用本机 Python 的 <code>--live</code> 模式可以重新核价；查询失败会停止，不会偷偷换成示例数据。</p></details>
+</main>
+<footer class="wrap"><p>Polaris-Smart LAB <span>·</span> M-CODE 2026 参赛作品</p><p>独立参赛作品，非麦当劳官方产品。输出仅供参考。</p><a href="https://github.com/polaris-smart/mcd-agent-gourmet" target="_blank" rel="noopener noreferrer">觉得有用？给作品一颗 Star ↗</a></footer>
+<noscript><p class="wrap">请启用 JavaScript 体验交互；也可以在 GitHub README 查看实测餐单和运行方法。</p></noscript>
+</body></html>

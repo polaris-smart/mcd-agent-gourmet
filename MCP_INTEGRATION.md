@@ -1,47 +1,40 @@
-# MCP_INTEGRATION
+# MCP 接入与验证边界
 
-## 麦当劳 MCP Server 接入说明
+Server：`https://mcp.mcd.cn`；协议：Streamable HTTP；认证：本机环境 `MCD_MCP_TOKEN`，作为 Bearer header。示例配置只使用环境变量占位符。官方文档：[M-China/mcd-mcp-server](https://github.com/M-China/mcd-mcp-server)。
 
-### 服务器信息
-- 端点：`https://mcp.mcd.cn`
-- 协议：Streamable HTTP（JSON-RPC 2.0）
-- 认证：Bearer Token（open.mcd.cn 手机登录后控制台申请）
-- 限流：600 次/分钟/Token
+## 实际调用
 
-### 使用的 MCP 工具
+| 工具 | 已实现用途 |
+|---|---|
+| `query-nearby-stores` | CLI Client/Skill 可查询门店；本次真实联调用它确认南京东城汇餐厅 |
+| `query-meals` | 实时验证所选套餐在当前门店菜单内 |
+| `query-meal-detail` | 读取真实套餐轮次与可替换项，生成完整明细 |
+| `list-nutrition-foods` | 解析官方表格，按名称精确匹配并加总；缺失保留 null |
+| `query-store-coupons` | 查询门店券；原始账号数据不保存进公开快照；默认模板不使用券 |
+| `calculate-price` | 六份候选分别核价，以返回整数分 `price` 为总价 |
 
-| 工具名 | 用途 | 调用场景 |
-|---|---|---|
-| `query-nearby-stores` | 查询附近门店 | 建立门店上下文 |
-| `query-meals` | 查询门店菜单 | 营养师/预算师/口味师获取餐品列表 |
-| `query-meal-detail` | 查询餐品详情 | 口味师分析套餐组成 |
-| `list-nutrition-foods` | 查询营养信息 | 营养师分析营养构成 |
-| `query-store-coupons` | 查询门店可用券 | 预算师计算最优方案 |
-| `calculate-price` | 商品价格计算 | 预算师真实计价（不猜测） |
-| `create-order` | 创建订单 | owner 审批后安全下单 |
-| `query-order` | 查询订单详情 | 下单后确认状态 |
+上述六种工具已实际调用。程序不实现下单、支付、积分兑换、自动领券。角色审阅基于同一份结构化事实，避免各角色重复查询账号数据。
 
-### 调用流程
+## 本次核实的接口细节
 
-```
-1. 建立门店上下文
-   query-nearby-stores → 用户选择门店
+- `query-nearby-stores` 位置搜索传 `beType=1, searchType=2, city, keyword`。
+- 到店即时场景使用 `storeCode, beType=1, orderType=1`，不传 beCode。
+- 菜单 `currentPrice` 为展示用元字符串，**不能当作完整候选的官方最终价格**。
+- 核价请求用 `items`；每项用 `productCode`、`quantity`。套餐明细用 `roundList`，其中 `round` 为字符串，子项在 `comboItemList` 中。
+- 核价返回 `data.price` 是整数分。拒绝缺失、负值和不明确单位；不回退到菜单价。
+- 2026-10-13 的营养响应 `data` 是 TOON 风格表格字符串，内含 `productName, energyKcal, protein, sodium` 等列；Python 用标准库 csv 解析。
+- 客户端先 initialize，再 notifications/initialized、tools/list。支持 JSON 与 SSE 响应、响应 ID 验证、Mcp-Session-Id；没有 session 时重新初始化。
+- JSON-RPC error、工具 isError、业务失败、HTTP 错误均停止；不把历史数据伪装成实时数据。
+- 只读工具白名单在客户端强制执行；HTTP 重定向被禁止，避免凭证跨站传递。
 
-2. 三 agent 并行工作
-   营养师：query-meals → list-nutrition-foods → 分析营养构成
-   预算师：query-meals → query-store-coupons → calculate-price
-   口味师：query-meals → query-meal-detail → 推荐搭配
+## 用券支持
 
-3. 协调器汇总
-   collect_proposals → 生成对比表 → owner 审批
+候选可在私有计划文件中显式提供 `coupon: {couponId, couponCode}`，两字段成对，仍由官方核价决定是否可用。不自动领取、不枚举券、不计算“过期即损失”，不承诺最优优惠。
 
-4. 安全下单（owner 审批后）
-   create-order → 返回支付链接 → owner 完成支付 → query-order 确认
-```
+本次六份正向核价均未使用券。用券字段与错误处理有代码路径；真实可用券成功核价尚未验证，不能宣传为已验证。
 
-### 业务价值
+## 数据流
 
-- **多 agent 协作**：不同角色 agent 分工，避免单一视角的局限
-- **治理层**：两本账（需求账+预算账）+ owner 审批链，确保决策透明
-- **真实计价**：所有金额来自 MCP `calculate-price`，不猜测不编造
-- **fixture demo**：零 Token 零联网即可体验多 agent 协作流程
+本机环境中的凭证 → 官方 MCP；官方菜单、详情与核价 → 本机规则比较；公开网页仅包含经过白名单字段整理的历史餐单。公开快照不含账号、手机号、位置坐标、订单、券 ID 或 Token。
+
+具体价格与命令结果见 [验证记录](docs/validation.md)。

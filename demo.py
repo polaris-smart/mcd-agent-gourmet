@@ -1,233 +1,65 @@
 #!/usr/bin/env python3
-"""麦门多 agent 协作点餐 · 双模式演示
-模式 A（零 Token）：fixtures/ 录制的真实 MCP 响应
-模式 B（有 Token）：真实调用麦当劳 MCP Server
-"""
+"""Offline snapshot by default; --live requests official MCP pricing explicitly."""
+import argparse
+import json
+import sys
+from pathlib import Path
+from gourmet.core import money_to_cents, review, select_plan
+from gourmet.live import fetch_snapshot
+from gourmet.mcp import Client, MCPError
+ROOT = Path(__file__).resolve().parent
 
-import json, os, sys, urllib.request, urllib.error
-
-def load_config():
-    """加载 config.json（有 Token 就用真实模式）"""
-    path = os.path.join(os.path.dirname(__file__), "config.json")
-    if os.path.exists(path):
-        with open(path, "r", encoding="utf-8") as f:
-            return json.load(f)
-    return None
-
-def load_fixture(name):
-    """加载 fixture（零 Token 模式）"""
-    path = os.path.join(os.path.dirname(__file__), "fixtures", f"{name}.json")
-    with open(path, "r", encoding="utf-8") as f:
-        return json.load(f)
-
-def mcp_call(tool_name, params, config):
-    """真实调用麦当劳 MCP Server"""
-    url = config["mcp_endpoint"]
-    token = config["mcp_token"]
-    payload = {
-        "jsonrpc": "2.0",
-        "id": 1,
-        "method": "tools/call",
-        "params": {"name": tool_name, "arguments": params}
-    }
-    req = urllib.request.Request(
-        url,
-        data=json.dumps(payload).encode("utf-8"),
-        headers={"Content-Type": "application/json", "Authorization": f"Bearer {token}"},
-        method="POST"
-    )
+def main(argv=None):
+    parser = argparse.ArgumentParser(description='麦门点餐议事会：完整餐单，透明取舍。')
+    parser.add_argument('--budget', default='35', help='预算（元），默认 35')
+    parser.add_argument('--taste', choices=['any', 'spicy', 'no-spicy'], default='spicy')
+    parser.add_argument('--side', choices=['any', 'fries'], default='any')
+    parser.add_argument('--sodium-limit', type=int, help='自定义钠上限 mg；不是医学建议')
+    parser.add_argument('--live', action='store_true', help='使用本机 MCD_MCP_TOKEN 实时核价')
+    parser.add_argument('--plan', type=Path, default=ROOT / 'fixtures/plan.json')
+    parser.add_argument('--input', type=Path, help='读取标准化报价 JSON')
+    parser.add_argument('--json', action='store_true', help='输出结构化审阅结果')
+    parser.add_argument('--save-snapshot', type=Path, help='保存脱敏报价，不存 Token 或券 ID')
+    parser.add_argument('--select', help='明确选择候选 ID，只记录选择，不下单')
+    parser.add_argument('--list-tools', action='store_true', help='读取允许的 MCP 工具参数')
+    args = parser.parse_args(argv)
     try:
-        with urllib.request.urlopen(req, timeout=15) as resp:
-            return json.loads(resp.read().decode("utf-8"))
-    except Exception as e:
-        return {"error": str(e)}
-
-def cents_to_yuan(cents):
-    return cents / 100.0
-
-def nutritionist_analyze(meals, nutrition_data):
-    """营养师：分析营养构成，标记超标项"""
-    report = {"agent": "营养师", "recommendations": [], "warnings": []}
-    for meal in meals:
-        nutrition = nutrition_data.get(meal["code"], {})
-        calories = nutrition.get("calories", 0)
-        sodium = nutrition.get("sodium", 0)
-        if calories > 600:
-            report["warnings"].append(f"⚠️ {meal['name']} 热量超标（{calories} kcal）")
-        if sodium > 800:
-            report["warnings"].append(f"⚠️ {meal['name']} 钠超标（{sodium} mg）")
-        if calories <= 500 and sodium <= 600:
-            report["recommendations"].append(f"✓ {meal['name']} 营养均衡（{calories} kcal）")
-    return report
-
-def budgeter_optimize(meals, coupons, budget=50):
-    """预算师：枚举候选方案，计算最优组合"""
-    plans = []
-    for meal in meals:
-        price_cents = meal.get("price", 0)
-        if price_cents <= budget * 100:
-            plans.append({"meal": meal["name"], "price": cents_to_yuan(price_cents)})
-    plans.sort(key=lambda x: x["price"])
-    return {"agent": "预算师", "plans": plans, "budget": budget}
-
-def taster_recommend(meals, preferences=None):
-    """口味师：推荐搭配，考虑个人偏好"""
-    preferences = preferences or {"spicy": True, "sweet": False}
-    recommendations = []
-    for meal in meals:
-        tags = meal.get("tags", [])
-        if preferences.get("spicy") and "辣" in tags:
-            recommendations.append(f"🌶️ {meal['name']}（辣味推荐）")
-        elif preferences.get("sweet") and "甜" in tags:
-            recommendations.append(f"🍰 {meal['name']}（甜味推荐）")
-    return {"agent": "口味师", "recommendations": recommendations}
-
-def coordinator_collect(nutrition, budget, taste):
-    """协调器：三 agent 方案汇总"""
-    print("=" * 60)
-    print("麦门多 agent 协作点餐 · 协调器汇总")
-    print("=" * 60)
-    print()
-    
-    print(f"【{nutrition['agent']}】")
-    for rec in nutrition["recommendations"]:
-        print(f"  {rec}")
-    for warn in nutrition["warnings"]:
-        print(f"  {warn}")
-    print()
-    
-    print(f"【{budget['agent']}】预算 {budget['budget']} 元")
-    for i, plan in enumerate(budget["plans"][:3], 1):
-        print(f"  {i}. {plan['meal']} —— {plan['price']:.1f} 元")
-    print()
-    
-    print(f"【{taste['agent']}】")
-    for rec in taste["recommendations"]:
-        print(f"  {rec}")
-    print()
-    
-    print("=" * 60)
-    print("【owner 审批】")
-    print("=" * 60)
-    print("三 agent 方案已呈现，请 owner 选择：")
-    print("  1. 采纳营养师推荐（健康优先）")
-    print("  2. 采纳预算师推荐（省钱优先）")
-    print("  3. 采纳口味师推荐（口味优先）")
-    print("  4. 综合选择（告诉我你的偏好）")
-    print()
-
-def main():
-    config = load_config()
-    
-    if config and config.get("mcp_token"):
-        print("麦门多 agent 协作点餐 · 真实模式（有 Token）")
-        print("数据源：麦当劳 MCP Server 实时调用")
-        print()
-        
-        # 第一步：查询附近门店
-        print("=" * 60)
-        print("第一步：query-nearby-stores（南京东城汇）")
-        print("=" * 60)
-        result = mcp_call("query-nearby-stores", {
-            "beType": 1,           # 到店自取
-            "searchType": 2,       # 按位置搜索
-            "city": "南京",
-            "keyword": "东城汇"
-        }, config)
-        
-        if "error" in result:
-            print(f"❌ MCP 调用失败：{result['error']}")
-            print("降级到 fixture demo 模式...")
-            config = None
+        budget = money_to_cents(args.budget)
+        if args.live and args.input:
+            raise ValueError('--live 与 --input 不能同时使用。')
+        if args.list_tools:
+            print(json.dumps(Client().tools(), ensure_ascii=False, indent=2))
+            return 0
+        if args.live:
+            data = fetch_snapshot(Client(), json.loads(args.plan.read_text(encoding='utf-8')))
         else:
-            structured = result["result"].get("structuredContent", {})
-            data = structured.get("data", [])
-            if data:
-                store = data[0]
-                print(f"✓ 找到门店：{store['storeName']}")
-                print(f"  地址：{store['address']}")
-                print(f"  距离：{store['distance']} 米")
-                print(f"  营业：{store['businessStartTime']}-{store['businessEndTime']}")
-                print(f"  状态：{'营业中' if store['businessStatus'] else '已打烊'}")
-                store_code = store['storeCode']
-                print()
-                
-                # 第二步：查询菜单
-                print("=" * 60)
-                print("第二步：query-meals（查询菜单）")
-                print("=" * 60)
-                result = mcp_call("query-meals", {
-                    "storeCode": store_code,
-                    "beType": 1,
-                    "orderType": 1
-                }, config)
-                
-                if "error" not in result:
-                    structured = result["result"].get("structuredContent", {})
-                    data = structured.get("data", {})
-                    categories = data.get("categories", [])
-                    meals_map = data.get("meals", {})
-                    print(f"✓ {len(categories)} 个分类，{len(meals_map)} 个餐品")
-                    for cat in categories[:3]:
-                        print(f"  {cat.get('name', '?')}: {len(cat.get('meals', []))} 个餐品")
-                    print()
-                    
-                    # 提取前 5 个餐品
-                    meals_list = []
-                    for code, meal in list(meals_map.items())[:5]:
-                        meals_list.append({
-                            "code": code,
-                            "name": meal.get("name", "?"),
-                            "price": int(float(meal.get("currentPrice", "0")) * 100),
-                            "tags": meal.get("tags", [])
-                        })
-                    
-                    # 三 agent 并行工作
-                    nutrition = nutritionist_analyze(meals_list, load_fixture("nutrition"))
-                    budget = budgeter_optimize(meals_list, load_fixture("coupons"), budget=50)
-                    taste = taster_recommend(meals_list, preferences={"spicy": True})
-                    
-                    # 协调器汇总
-                    coordinator_collect(nutrition, budget, taste)
-                else:
-                    print(f"❌ query-meals 失败：{result['error']}")
-            else:
-                print("❌ 未找到门店")
-                config = None
-    
-    if not config or not config.get("mcp_token"):
-        print("麦门多 agent 协作点餐 · 零配置演示（fixture 模式）")
-        print("数据：fixtures/ 中录制的真实 MCP 响应（2026-10-12 采集）")
-        print()
-        
-        # fixture 模式
-        meals = load_fixture("meals")
-        nutrition_data = load_fixture("nutrition")
-        coupons = load_fixture("coupons")
-        
-        print("=" * 60)
-        print("链路：多 agent 协作点餐")
-        print("=" * 60)
-        print("门店：麦当劳南京东城汇餐厅(1990622)（到店自取）")
-        print("需求：想吃「汉堡 + 薯条 + 可乐」，预算 50 元")
-        print()
-        
-        # 三 agent 并行工作
-        nutrition = nutritionist_analyze(meals, nutrition_data)
-        budget = budgeter_optimize(meals, coupons, budget=50)
-        taste = taster_recommend(meals, preferences={"spicy": True})
-        
-        # 协调器汇总
-        coordinator_collect(nutrition, budget, taste)
-    
-    print("=" * 60)
-    print("【本演示到此】")
-    print("=" * 60)
-    print("真实运行时：")
-    print("  · owner 选择方案 → 协调器创建订单 → 返回支付链接")
-    print("  · 所有金额来自 MCP calculate-price 真实计价")
-    print("  · 任何写操作必须经 owner 显式确认")
-    print()
+            data = json.loads((args.input or ROOT / 'fixtures/snapshot.json').read_text(encoding='utf-8'))
+        result = review(data, budget, args.taste, args.sodium_limit, args.side)
+        if args.save_snapshot:
+            args.save_snapshot.write_text(json.dumps(dict(data, mode='snapshot'), ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+        if args.select:
+            result['selected'] = select_plan(result, args.select, result['review_id'])
+        if args.json:
+            print(json.dumps(result, ensure_ascii=False, indent=2))
+        else:
+            label = '本轮实时核价' if data['mode'] == 'live' else '历史快照演示 · 当前购买须重新核价'
+            print('麦门点餐议事会 | ' + label)
+            print(data['store']['name'], '|', data['captured_at'])
+            print('需求：主食＋小食＋饮料各至少一份；预算 ¥%.2f' % (budget / 100))
+            for p in result['plans']:
+                print('\n[%s] %s · %s：¥%.2f' % (p['id'], p['name'], p['variant'], p['price_cents'] / 100))
+                print('  ' + ' + '.join(i['name'] for i in p['items']))
+                print('  钠：%s；能量：%s' % (str(p['sodium_mg']) + ' mg' if p['sodium_mg'] is not None else '未知', str(p['energy_kcal']) + ' kcal' if p['energy_kcal'] is not None else '未知'))
+                print('  ' + ('符合当前硬性条件' if p['eligible'] else '；'.join(p['reasons'])))
+            print('\n三个规则审阅器：', result['reviewers'])
+            print('观点存在差异，由你选择。' if result['disagreement'] else '当前条件下意见一致，或没有可选方案。')
+            if result['selected']:
+                print('已记录餐单选择；未创建订单，未支付。')
+            print('仅比较上述候选，不保证全菜单最低价；不构成营养或医疗建议。')
+        return 0
+    except (MCPError, ValueError, KeyError, OSError) as exc:
+        print('本轮停止：' + str(exc), file=sys.stderr)
+        return 2
 
-if __name__ == "__main__":
-    main()
+if __name__ == '__main__':
+    raise SystemExit(main())
