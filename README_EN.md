@@ -30,4 +30,10 @@ Independent M-CODE 2026 entry. Not an official McDonald's product. MIT for origi
 
 The CLI prints source, store and timestamp to stderr even with JSON output. The web demo prominently labels historical prices. Price/sodium and taste/sodium comparisons retain non-dominated, eligible candidates with known sodium; energy and protein remain visible rather than being converted to an unsupported health score. These are six quoted candidates, not an exhaustive menu search.
 
-Run `python3 demo.py --list-coupons` to see coupon titles and matching candidate IDs. The explicit live flags `--coupon-title` and `--coupon-candidate` resolve private identifiers in memory; ambiguous names and product mismatches stop. No coupon is used by default. Successful live coupon pricing remains unverified.
+Run `python3 demo.py --list-coupons --plan fixtures/plan.json` after confirming that store to see coupon titles and matching candidates. The explicit live flags `--coupon-title` and `--coupon-candidate` resolve private identifiers in memory. Ambiguous names and mismatches stop; no coupon is used by default. Successful live coupon pricing remains unverified.
+
+## Version 0.3
+
+Sugar preferences, official ice/ingredient customization, bounded combinations, explicit store selection, channel-aware coupon and pricing contexts, read-only points/coupon views, and multi-nutrient comparisons are implemented. Ingredient removal invalidates standard nutrition totals. The web demo includes two independent historical stores and optional browser-local preferences.
+
+Build the WorkBuddy distribution using `python3 scripts/build_skill_package.py --output /tmp/mcd-agent-gourmet-0.3.0.zip`. It is not yet submitted or listed. See [capability boundaries](references/mcp-capabilities.md) and [validation](docs/validation.md), including verified pickup customizations and unverified delivery pricing.

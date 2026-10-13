@@ -27,6 +27,57 @@
 
 网页使用历史快照，所有比较在你的浏览器内完成，不收集凭证、不调用下单、不加入追踪器。
 
+## 0.3：按普通人的点餐方式使用
+
+“35 元、不辣、无糖去冰、带走”应当是一句话。WorkBuddy Skill 会补问缺失的门店或配送地址，按官方选项构造餐单，解释未满足的条件，不要求普通用户查商品或券 ID。
+
+- **糖与冰量**：支持无糖/含糖筛选；标准冰、少冰、去冰、多冰使用当次官方特调 key。去酱、去菜按完整配料名匹配，重新核价，去配料后标准营养合计改为未知。
+- **门店与组合**：搜索门店、查看当次菜单、选择套餐；按可售的小食×饮料最多展开 12 份并逐份核价。供应缺失就说明，不能把旧店套餐当成全国通用。
+- **多维取舍**：个人能量上限、蛋白质下限，以及价格/钠/能量/蛋白质的非支配候选；不输出任意健康评分。
+- **没有合适餐单时**：只有预算阻碍时显示保持其他条件所需的最低候选预算；否则提示扩展候选或由用户调整条件，不自动放宽。
+- **少重复填写**：网页可主动点击“记住我的条件”，仅在当前浏览器保存，可随时清除。复制到 WorkBuddy 的文字会携带当前偏好和履约意图。
+
+网页可切换两组独立历史样例：东城汇六份餐单、南京洪武四份去冰餐单。后者包含实测“薯条＋无糖可乐”。各组独立标明门店与时间，不跨店混比。网页不实时核价、不接受 Token。
+
+```bash
+python3 demo.py --sugar zero --energy-limit 700 --protein-min 20
+python3 demo.py --search-stores --city 南京 --keyword 新街口
+# 用返回的真实门店和套餐编码替换下列占位文本
+python3 demo.py --list-meals --store-code 门店编码
+python3 demo.py --live --store-code 门店编码 --meal-code 套餐编码 --expand --sugar zero --ice none
+```
+
+没有核验冰量的历史样例不能被改成去冰报价。CLI 当前只自动构造三轮完整套餐；全部杯型、儿童玩具、辣度分级及过敏原尚未完整支持。
+
+### 积分、优惠券与到店/配送
+
+```bash
+python3 demo.py --member
+python3 demo.py --points-products
+python3 demo.py --points-detail 商品SPU编号
+python3 demo.py --addresses
+python3 demo.py --delivery-stores --address-ref 查询返回的引用
+python3 demo.py --list-coupons --channel delivery --store-code 配送门店编码 --business-code 成对业务编码
+```
+
+会员输出只保留积分与券的必要展示字段，不输出账号 ID、券码。地址只显式查询，隐藏姓名、电话及后续门牌；稳定引用防止地址列表变动选错地址。
+
+**积分兑换与券的适用渠道是两次核验。** 兑换积分、兑换现金和用券额外现金分别展示，官方须知原文保留。不能直接按比例把积分抵预算，也不能保证所有积分券支持麦乐送。拥有券后，按当前门店与渠道查询可用券并官方核价。
+
+堂食/外带选项来自核价的 `takeWayList`；到店使用 `beType=1/orderType=1`，得来速为 `5/1`，麦乐送为 `2/2`，后两者须使用相应门店返回的 `beCode`。菜单、券和核价全程一致；配送费用保留官方结果，不用到店价冒充送到家价格。
+
+完整的 **35 个 MCP 工具能力地图、接入状态与未实现范围**见 [能力说明](references/mcp-capabilities.md)。本程序不领券、不兑换、不下单，也不自动抽奖。
+
+### WorkBuddy Skill 市场
+
+已按官方格式补齐元数据与资源目录，可构建 ZIP 分发包：
+
+```bash
+python3 scripts/build_skill_package.py --output /tmp/mcd-agent-gourmet-0.3.0.zip
+```
+
+包可用于开放平台投稿，**目前未提交审核、未上架**。安装与上架文案见 [市场发布说明](docs/workbuddy-market.md)。Skill 优先使用客户端已配置的麦当劳 MCP；脚本只需 Python 标准库。
+
 ## 本地运行
 
 Python **3.9+**，仅标准库，零第三方依赖。
@@ -45,7 +96,7 @@ python3 demo.py --budget 35 --taste spicy --side fries --json
 
 1. 在 [麦当劳开放平台](https://open.mcd.cn/mcp) 申请自己的 MCP Token。
 2. 在本机私有环境中设置 `MCD_MCP_TOKEN`。不要提交到 Git，也不要粘贴到公共对话或网页。
-3. 先核对 `fixtures/plan.json` 中的门店。默认是本项目测试的南京东城汇餐厅，**不是自动定位到你的附近门店**。换店需从 `query-nearby-stores` 的返回中选择门店编码，再核对该门店菜单和套餐详情。
+3. 先搜索并选择门店。实时模式必须明确传入 `--store-code` 或已确认的 `--plan`，不会自动沿用南京样例店。再用 `--list-meals` 查看该店当次菜单，用 `--meal-code` 选择套餐。
 4. 显式运行：
 
 ```bash
@@ -53,7 +104,7 @@ python3 demo.py --list-tools
 python3 demo.py --live --plan fixtures/plan.json --budget 35 --taste spicy
 ```
 
-程序会读取当次菜单、官方营养数据，再对六份完整餐单逐份 `calculate-price`。真实查询失败会停止，**不拿历史快照伪装成实时结果**。当前模板只支持到店取餐、即时三轮套餐；默认不使用优惠券。
+程序读取当次菜单、官方营养数据，对候选逐份 `calculate-price`。真实查询失败会停止，**不拿历史快照伪装成实时结果**。自动构造支持即时三轮套餐；到店已实测，配送/得来速参数已接入但未完成真实核价联调。默认不使用优惠券。
 
 ### 可用券查询与按名称核价
 
@@ -61,7 +112,7 @@ python3 demo.py --live --plan fixtures/plan.json --budget 35 --taste spicy
 
 ```bash
 python3 demo.py --list-coupons --plan fixtures/plan.json
-python3 demo.py --live --coupon-title '查询返回的完整券名称' --coupon-candidate chicken-classic
+python3 demo.py --live --plan fixtures/plan.json --coupon-title '查询返回的完整券名称' --coupon-candidate chicken-classic
 ```
 
 `candidate_ids` 为空表示这张券不匹配当前六份套餐；单品券不会硬套到套餐。名称重复、商品不匹配或券标识缺失均停止。程序只在内存中解析成对标识并交给官方核价，不自动领券。传入券不代表已获优惠，只有官方报价可作为价格依据；真实用券成功链路尚未验证。高级用户仍可在私有计划文件显式提供成对字段。
@@ -70,7 +121,7 @@ python3 demo.py --live --coupon-title '查询返回的完整券名称' --coupon-
 python3 demo.py --live --plan local/my-plan.json --save-snapshot local/quotes.json
 ```
 
-`--save-snapshot` 保存脱敏餐单快照；不包含 Token、券 ID、账号信息。保存后即标为历史快照。新核价也仅在本工具 15 分钟复核窗口内允许按实时结果选择；这不是官方价格有效期承诺。
+`--save-snapshot` 保存脱敏餐单快照；不包含 Token、券 ID、账号信息。保存后即标为历史快照。新核价也仅在本工具默认 15 分钟复核窗口（可用 `--freshness-minutes` 配置为 1～60 分钟）内允许按实时结果选择；这不是官方价格有效期承诺。
 
 ## 在 WorkBuddy 里使用
 

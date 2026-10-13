@@ -4,3 +4,6 @@
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important;animation:none!important}}
 
 .data-notice{padding:14px 18px;border-left:4px solid #aa2369;background:#fbf0f5;border-radius:4px;line-height:1.7}.strategy{padding:20px 0;border-bottom:1px solid #ded8dc}.strategy h3{margin:0 0 12px}.strategy label{margin-right:12px}.strategy select{max-width:100%}#tradeoffs{display:flex;gap:20px;flex-wrap:wrap}#tradeoffs p{flex:1 1 240px;margin:8px 0;padding:14px;background:#f6f3f4;border-radius:8px;line-height:1.8}
+
+/* Optional preferences and the handoff to the installed skill. */
+.controls{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}.advanced{grid-column:1/-1;padding-top:12px}.advanced summary{cursor:pointer}.advanced input{display:block;width:min(100%,240px);padding:10px;margin:6px 0 12px;border:1px solid #b9b2b5;border-radius:8px;font:inherit}.preference-actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center;padding:12px 0;font-size:.85rem}.handoff{margin:48px 0;padding:24px;border:1px solid #d9cbd2;border-radius:16px}.handoff pre{white-space:pre-wrap;overflow-wrap:anywhere;font:inherit;line-height:1.8;padding:16px;background:#faf6f8;border-radius:8px}.handoff .field-note{margin-top:16px}

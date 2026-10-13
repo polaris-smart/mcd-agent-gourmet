@@ -18,11 +18,11 @@ class Tradeoffs(unittest.TestCase):
         self.data = json.loads((ROOT/'fixtures/snapshot.json').read_text())
     def test_two_actual_tradeoffs(self):
         r = review(self.data, taste='spicy')
-        self.assertEqual(r['tradeoffs'], {'price_sodium':['cheese-corn','fish-corn'], 'taste_sodium':['chicken-corn','fish-corn']})
+        self.assertEqual(r['tradeoffs'], {'price_sodium':['cheese-corn','fish-corn'], 'taste_sodium':['chicken-corn','fish-corn'], 'nutrition_multi':['cheese-corn','fish-corn','cheese-classic','fish-classic']})
     def test_hard_constraints_and_missing_values(self):
         self.assertEqual(review(self.data, budget_cents=3000)['tradeoffs']['price_sodium'], [])
         for p in self.data['plans']: p['sodium_mg'] = None
-        self.assertEqual(review(self.data)['tradeoffs'], {'price_sodium':[], 'taste_sodium':[]})
+        self.assertEqual(review(self.data)['tradeoffs'], {'price_sodium':[], 'taste_sodium':[], 'nutrition_multi':[]})
     def test_equal_candidates_remain(self):
         p = copy.deepcopy(self.data['plans'][-1]); p['id']='equal-fish'; self.data['plans'].append(p)
         self.assertIn('equal-fish', review(self.data)['tradeoffs']['price_sodium'])

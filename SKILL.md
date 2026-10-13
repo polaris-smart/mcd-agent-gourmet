@@ -1,6 +1,11 @@
 ---
 name: mcd-agent-gourmet
 description: 麦门点餐议事会。用户想在预算、口味和营养数据之间比较完整的麦当劳餐单时使用，例如“35元想吃辣但希望钠少一点”“别只推荐便宜饮料”“帮我看这几份怎么选”。先选门店、确认主食小食饮料要求，使用官方MCP逐份核价，三角色分别说明取舍，用户最终选择。只查询核价，不领券不下单。
+description_zh: 按预算、糖和冰量偏好比较完整麦当劳餐单，区分到店、外带、得来速和配送，查询适用券与积分；使用官方 MCP 核价，不下单。
+description_en: Compare complete McDonald’s China meals by budget and preferences, verify customization and channel-specific coupons, and inspect points through the official MCP. Read-only, no ordering.
+version: 0.3.0
+author: Polaris-Smart LAB
+display_name: 麦门点餐议事会
 agent_created: true
 ---
 
@@ -12,15 +17,33 @@ agent_created: true
 
 - 只调用查询与核价工具；本 Skill 不执行 `create-order`、领券、积分兑换、支付。
 - Token 仅在客户端私有配置或本机环境；不让用户粘贴到公开网页、Issue 或日志。
-- 不自动使用仓库示例门店代替用户选择；先问城市/位置，再通过 `query-nearby-stores` 列出门店供选择。
+- 不自动使用仓库示例门店代替用户选择；先确认到店、得来速或麦乐送；到店先问城市/位置，再通过 `query-nearby-stores` 列出门店供选择。
 - 用户明确预算、主食/小食/饮料份数、排除项。“不吃辣”是硬约束，“想吃辣”可作为软偏好。
 - 营养指标上限须来自用户；不要把固定阈值描述为普遍健康标准。
 
+## 先理解一句话，再少问必要的问题
+
+例如“35 元，不辣，无糖去冰，带走”：提取预算、不辣硬约束、无糖和去冰、到店外带意图。只补问缺失的城市/地标和门店，不要求用户填写长表或复制商品 ID。可记住普通饮食偏好，但先征得用户同意；不要存 Token、地址、券码或会员原始数据。
+
+推荐顺序：先给最多三份值得比较的方案和一句取舍，再允许展开全部候选。没有合适方案时说清阻碍；只提出调整建议，不能替用户增加预算、换店、换饮料或放宽排除项。能量、蛋白质、钠用于连续比较，未知不归零，不打无依据的健康分。
+
+## 履约场景必须先确定
+
+- 到店（`pickup`）：`beType=1, orderType=1`，不得带 `beCode`。堂食和外带都在到店链路；具体可选取餐方式从核价的 `takeWayList` 展示，不能自造 `takeWayCode`。本 Skill 不下单，只把用户选择带到餐单。
+- 得来速（`drive`）：`beType=5, orderType=1`，用相应门店查询返回的 `storeCode + beCode`。
+- 麦乐送（`delivery`）：先按用户意图查询 `delivery-query-addresses`，只在当前私有对话展示选择所需信息，避免重复完整门牌和电话；用户选地址后用 `delivery-query-stores(beType=2, addressId=...)` 获取成对编码。菜单、券、详情、核价全程使用 `beType=2, orderType=2, storeCode, beCode`。
+- 地址为空时引导用户在官方应用添加。本版本不写地址、不下单。切换渠道/门店/地址后，旧券适用结论、旧报价和旧选择均失效。外卖应展示配送、包装、餐具费用，缺失为未知，不能拿到店餐价冒充送到家总价。
+- 企业团餐有独立的 `beType=6`、助餐服务和活动规则，本程序尚未接通，不能套用个人点餐流程。
+
 ## 事实采集：协调器负责
 
-1. `query-nearby-stores`：到店取餐 `beType=1, searchType=2`，同时提供 city 与 keyword。
-2. `query-meals`：门店 code、`beType=1, orderType=1`。到店场景不传 beCode。
-3. `query-meal-detail`：确认套餐每一轮的实际商品与数量。仅从可选项中替换。
+1. 按上面的履约场景查询门店；到店/得来速位置搜索使用 `searchType=2`，同时提供 city 与 keyword。展示店名、地址、营业状态；支持预约时完整展示服务端预约选项，不省略日期时段。本程序只核价即时餐单。
+2. `query-meals`：使用当前履约上下文，读取这家店当次菜单。原样例套餐缺失时停止并让用户选其他套餐，不能暗中替代。
+3. `query-meal-detail`：确认套餐每一轮的实际商品与数量。仅从可选项中替换。`supportModify=true` 时标注“可特调”；只有用户问特调或已经提出冰量/配料要求时，才展开对应选项。
+   - 无糖/含糖是餐品选择；冰量通过当前饮料的 `modification` 映射。支持标准、少冰、去冰、多冰取决于该饮料当次选项。
+   - 使用当次 `selectedKey`；未选项若有 `unselectedKey` 也须提交。不把同 code 的不同冰量误当成同一选项。
+   - 去酱/去菜按官方完整配料名称匹配，不凭“不要酱”猜测多种酱中的哪一个。特调后重新核价；去除配料后原标准营养值不再适用，标未知。
+   - 小/中/大杯、辣度分级、额外酱、玩具：只有当前菜单或特调提供明确选项时才能确认；否则明确未支持。不能把无糖等同于无甜味、把“不辣”当作过敏安全判断。
 4. `list-nutrition-foods`：按具体餐品名称和份量匹配。缺失为未知。标准份量相加不是实际制作的精确测量。
 5. 用户需要用券时才调用 `query-store-coupons`：仅查看当前可用券，不自动领取。用券要拿到有效且成对的 couponId/couponCode，且该券要由官方核价验证；不要凭券名减钱。只向用户展示券名称及适配候选，协调器在内存中解析标识；不要求普通用户提供券 ID。默认不带券。
 6. `calculate-price`：每份完整候选独立核价，用 `items[].productCode`、`roundList[].round` 和 `comboItemList` 传套餐选择；应付来自返回的整数分 `price`。替换任何餐品后重新核价，不能手算差价。
@@ -41,16 +64,37 @@ agent_created: true
 
 用表格展示每份餐单：完整明细、当次整单价格、预算余量或超额、已知营养、未满足条件、角色意见。没有满足条件的候选时明确说明。
 
-同时给出“价格与钠”“口味与钠”的取舍候选，只保留符合硬性条件、数据完整且未被另一份在两个维度同时胜过的餐单。同值并列保留，能量与蛋白质单列，不编造健康评分，不声称穷举全部菜单。
+同时给出“价格与钠”“口味与钠”的取舍候选，只保留符合硬性条件、数据完整且未被另一份在两个维度同时胜过的餐单。同值并列保留，另提供价格、钠、能量、蛋白质四维取舍，所有对应指标须完整。不编造健康评分，不声称穷举全部菜单。
 
 用户选择前，复述门店、餐品、份数与价格。用户改变预算/偏好/餐单后，旧选择作废。记录选择不等于创建订单；后续购买由用户在官方渠道完成。
+
+## 积分、券包与渠道核验
+
+只有用户询问积分/券包时，才调用相应个人接口。`query-my-account` 返回积分数据，不是完整会员档案；没有会员等级字段就不能猜测等级。
+
+1. `query-my-coupons` 展示拥有的券；分页不完整要说明。它不校验门店/渠道。
+2. `available-coupons` 只是可领取券目录，不表示已经领取。
+3. `mall-points-products` 按用户兴趣查餐品券、实物或活动；不同类目不混用。CLI 当前只查询餐品券。
+4. 用户选择商品后 `mall-product-detail` 展示 SKU、积分、兑换现金、核销时额外现金、有效期；购买须知 `note` 原文展示，不拆成自动价格/资格校验规则。
+5. 必须区分“积分换券”与“券能在这次订单用”。积分不按固定比例直接当现金。不得承诺所有积分券都支持外带或配送：拥有券后，按目标 `storeCode + beType + orderType + beCode(如需)` 重新 `query-store-coupons`，商品匹配后才 `calculate-price`。未兑换商品的渠道资格标“尚未核验”，不能为了验证先花掉积分。
+6. 本版本不领取、不兑换、不支付、不抽奖。用户要购买时转到官方渠道；不要报告没有执行的交易成功。
+
+详见 `references/mcp-capabilities.md` 的完整能力与实现状态。订单复购、活动等可作为后续扩展，不冒充本版本已接入。
 
 ## 本地程序
 
 - `python3 demo.py`：历史快照演示，零 Token，不联网。
-- `python3 demo.py --list-coupons`：只查询券名称与匹配候选，不领券、不输出券 ID。
+- `python3 demo.py --list-coupons --plan fixtures/plan.json`：只查询券名称与匹配候选，不领券、不输出券 ID。
 - `python3 demo.py --live --plan local/my-plan.json`：用户选定门店和候选后真实核价。
 - `python3 demo.py --budget 35 --taste spicy --side fries --json`：结构化角色意见。
+- `python3 demo.py --search-stores --city 南京 --keyword 新街口`：按地点搜索到店门店；`--channel drive` 查询得来速。
+- `python3 demo.py --list-meals --store-code 门店编码`：当前菜单；`--meal-code 编码` 选择最多三种套餐，不再限定原样例。
+- `python3 demo.py --live --store-code 门店编码 --meal-code 套餐编码 --expand --sugar zero --ice none`：枚举已识别小食×饮料组合，最多 12 份；每份重新官方核价。用当前官方特调 key 处理去冰。数字编码由协调器从工具结果带入，不让普通用户查 ID。
+- `python3 demo.py --live --plan local/my-plan.json --omit 麦香鸡酱`：只对实际存在该配料的套餐执行去除特调，不沿用标准营养总数。
+- `python3 demo.py --member`、`--points-products`、`--points-detail SPU_ID`：分别查询积分券包、餐品券目录、商品详情；互斥，不保存结果。
+- `python3 demo.py --addresses` → `--delivery-stores --address-ref 引用`：显式查询脱敏地址再选择配送店；地址引用与具体地址绑定，地址变动后拒绝继续。
+- `python3 demo.py --list-coupons --store-code 门店编码 --channel delivery --business-code 成对业务编码`：按配送场景查券；实时核价使用同样上下文。
+- `--energy-limit`、`--protein-min`、`--freshness-minutes` 和 `--max-response-mb` 提供显式边界。
 - `gourmet/core.py`：完整餐单与硬性条件校验。
 - `gourmet/mcp.py`：协议与只读工具白名单。
 - `gourmet/live.py`：套餐构造、官方核价、精确名称营养匹配。

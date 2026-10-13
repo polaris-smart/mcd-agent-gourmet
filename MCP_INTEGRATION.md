@@ -4,6 +4,12 @@ Server：`https://mcp.mcd.cn`；协议：Streamable HTTP；认证：本机环境
 
 ## 实际调用
 
+v0.3.0 新增会员积分、券包、待领券、积分餐品券目录及详情入口；前四种查询已实测成功，详情按官方 schema 实现并做契约测试。新增配送地址和门店入口已做契约测试，尚未读取私人地址做联调。完整工具地图见 [references/mcp-capabilities.md](references/mcp-capabilities.md)。
+
+新增去冰四份组合、少冰＋去酱各自实际核价成功。特调使用当前详情的 selectedKey，并提交应有的 unselectedKey；去配料后不沿用标准营养合计。程序自动组餐仅接受已核对类别的餐品编码，不能凭三个轮次就假设是完整一餐。
+
+菜单、券与核价使用统一履约上下文：到店 1/1 无 beCode；得来速 5/1、配送 2/2 使用各自门店返回的 beCode。堂食/外带来自官方核价取餐选项。配送和得来速的真实核价仍未验证。
+
 | 工具 | 已实现用途 |
 |---|---|
 | `query-nearby-stores` | CLI Client/Skill 可查询门店；本次真实联调用它确认南京东城汇餐厅 |

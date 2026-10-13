@@ -1,5 +1,6 @@
 """Read-only McDonald's MCP client. Credentials and raw responses stay local."""
 
+from . import __version__
 import json
 import os
 import urllib.error
@@ -9,6 +10,9 @@ ENDPOINT = "https://mcp.mcd.cn"
 READ_TOOLS = frozenset({
     "query-nearby-stores", "query-meals", "query-meal-detail",
     "query-store-coupons", "list-nutrition-foods", "calculate-price",
+    "query-my-account", "query-my-coupons", "available-coupons",
+    "mall-points-products", "mall-product-detail",
+    "delivery-query-addresses", "delivery-query-stores",
 })
 
 
@@ -61,13 +65,18 @@ def tool_data(result):
         raise MCPError("工具结果中没有可解析的结构化数据。")
     if isinstance(value, dict):
         if value.get("code") not in (None, 0, "0", 200, "200") or value.get("success") is False:
+            if value.get('code') == 600057:
+                raise MCPError('门店可能已关闭或不在营业时间；请主动选择营业门店，未自动换店。')
             raise MCPError("麦当劳业务接口返回失败；本轮已停止。")
         return value.get("data", value)
     return value
 
 
 class Client:
-    def __init__(self, token=None):
+    def __init__(self, token=None, max_response_bytes=8_000_000):
+        if type(max_response_bytes) is not int or not 1_000_000 <= max_response_bytes <= 64_000_000:
+            raise ValueError('响应上限须为 1～64 MB。')
+        self.max_response_bytes = max_response_bytes
         self.token = token or os.environ.get("MCD_MCP_TOKEN", "")
         if not self.token or "\n" in self.token or "\r" in self.token:
             raise MCPError("请在本机设置 MCD_MCP_TOKEN 环境变量，不要公开 Token。")
@@ -96,9 +105,9 @@ class Client:
                 session = response.headers.get("Mcp-Session-Id")
                 if session:
                     self.session = session
-                raw = response.read(8_000_001)
-                if len(raw) > 8_000_000:
-                    raise MCPError("响应过大；本轮已停止。")
+                raw = response.read(self.max_response_bytes + 1)
+                if len(raw) > self.max_response_bytes:
+                    raise MCPError("响应超过配置上限；本轮已停止，未使用截断数据。可用 --max-response-mb 调整。")
                 content_type = response.headers.get("Content-Type", "")
         except urllib.error.HTTPError as exc:
             raise MCPError("MCP HTTP %s；请检查凭证、参数或稍后重试。" % exc.code) from None
@@ -114,7 +123,7 @@ class Client:
     def initialize(self):
         result = self.request("initialize", {
             "protocolVersion": self.protocol, "capabilities": {},
-            "clientInfo": {"name": "mcd-agent-gourmet", "version": "0.2.0"},
+            "clientInfo": {"name": "mcd-agent-gourmet", "version": __version__},
         })
         self.protocol = result.get("protocolVersion", self.protocol)
         self.request("notifications/initialized", notification=True)

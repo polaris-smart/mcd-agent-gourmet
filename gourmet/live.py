@@ -5,6 +5,10 @@ import copy
 import re
 from datetime import datetime, timezone
 from .mcp import MCPError
+from .catalog import FRIES_CODES, DRINK_SUGAR, SIDE_CODES, DRINK_CODES, MAIN_SPICY
+from itertools import product
+from .customize import modifications
+from .channels import order_context
 
 
 def nutrition_rows(value):
@@ -38,7 +42,7 @@ def nutrition_rows(value):
     return result
 
 
-def assemble(detail, replacements):
+def assemble(detail, replacements, ice='any', omit=()):
     rounds, items = [], []
     groups = detail.get("rounds", [])
     if len(groups) != 3:
@@ -49,9 +53,19 @@ def assemble(detail, replacements):
         if len(choices) != 1 or group.get("minQuantity") != 1 or group.get("maxQuantity") != 1:
             raise MCPError("套餐选项已变化；请重新检查餐单模板。")
         choice = choices[0]
-        rounds.append({"round": str(group["id"]), "comboItemList": [{"code": choice["code"], "quantity": 1}]})
+        known_codes = {'main': set(MAIN_SPICY), 'side': set(SIDE_CODES), 'drink': set(DRINK_CODES)}
+        if choice['code'] not in known_codes[kind]:
+            raise MCPError('所选餐品分类尚未核对，不能仅凭轮次猜它是主食、小食或饮料。')
+        modification, labels = modifications(choice, ice if kind == 'drink' else 'any', omit if kind == 'main' else ())
+        request_choice = {"code":choice["code"], "quantity":1}
+        if modification:
+            request_choice['modification'] = modification
+        rounds.append({"round": str(group["id"]), "comboItemList": [request_choice]})
         items.append({"code": choice["code"], "name": choice["name"], "quantity": 1,
-                      "kind": kind, "is_fries": kind == "side" and "薯条" in choice["name"]})
+                      "kind": kind, "customizations": labels,
+                      "ice": ice if kind == 'drink' and ice != 'any' else None,
+                      "nutrition_customized": bool(omit and kind == 'main'), "is_fries": kind == "side" and choice["code"] in FRIES_CODES,
+                      "sugar": DRINK_SUGAR.get(choice["code"]) if kind == "drink" else None})
     return {"productCode": detail["code"], "quantity": 1, "roundList": rounds}, items
 
 
@@ -63,8 +77,7 @@ def quoted_cents(value):
 
 
 def store_coupons(client, plan):
-    value = client.call('query-store-coupons', {
-        'storeCode': plan['store']['code'], 'beType': 1, 'orderType': 1})
+    value = client.call('query-store-coupons', order_context(plan))
     if not isinstance(value, list) or not all(isinstance(c, dict) for c in value):
         raise MCPError('无法识别当前门店可用券结构。')
     return value
@@ -99,9 +112,11 @@ def plan_with_coupon(plan, coupons, title, candidate_id):
     return adjusted
 
 
-def fetch_snapshot(client, plan, on_progress=None, coupon_title=None, coupon_candidate=None):
+def fetch_snapshot(client, plan, on_progress=None, coupon_title=None, coupon_candidate=None, expand=False, ice='any', omit=()):
     if bool(coupon_title) != bool(coupon_candidate):
         raise ValueError('用券须同时指定券名称和候选 ID。')
+    if expand and coupon_title:
+        raise ValueError("扩展组合与单候选用券请分轮核价，避免把券套到未确认的组合。")
     if coupon_title:
         plan = plan_with_coupon(plan, store_coupons(client, plan), coupon_title, coupon_candidate)
     store, specs = plan["store"], plan["candidates"]
@@ -109,17 +124,42 @@ def fetch_snapshot(client, plan, on_progress=None, coupon_title=None, coupon_can
         raise ValueError("一次最多核价 12 份餐单。")
     if not isinstance(store.get("code"), str) or not store["code"].isdigit():
         raise ValueError("门店编码必须是数字字符串。")
-    base = {"storeCode": store["code"], "beType": 1, "orderType": 1}
+    base = order_context(plan)
     menu = client.call("query-meals", base)
     nutrition = nutrition_rows(client.call("list-nutrition-foods", {}))
     details, results = {}, []
+    if expand:
+        expanded = []
+        for code in dict.fromkeys(s['product_code'] for s in specs):
+            if code not in menu.get('meals', {}):
+                raise MCPError('当前门店没有候选套餐，请选择其他菜单。')
+            detail = client.call('query-meal-detail', dict(base, code=code))
+            details[code] = detail
+            groups = detail.get('rounds', [])
+            if len(groups) != 3:
+                raise MCPError('套餐轮次已变化，停止扩展。')
+            sides = [c for c in groups[1]['choices'] if c['code'] in SIDE_CODES]
+            drinks = [c for c in groups[2]['choices'] if c['code'] in DRINK_CODES]
+            source = next(s for s in specs if s['product_code'] == code)
+            if source.get('coupon'):
+                raise ValueError('扩展组合不自动继承优惠券。')
+            if not sides or not drinks:
+                raise MCPError('当前门店缺少可识别的小食或饮料选项。')
+            for side, drink in product(sides, drinks):
+                expanded.append({'id': f"{code}-{side['code']}-{drink['code']}",
+                    'product_code':code, 'label':side['name']+' · '+drink['name'],
+                    'spicy':source.get('spicy'), 'replacements':{
+                        str(groups[1]['id']):side['code'], str(groups[2]['id']):drink['code']}})
+        if len(expanded) > 12:
+            raise ValueError('扩展后超过 12 份，请缩小套餐范围；未截断候选。')
+        specs = expanded
     for spec in specs:
         code = spec["product_code"]
         if code not in menu.get("meals", {}):
             raise MCPError("当前门店没有候选套餐；请重新选餐，不沿用旧数据。")
         if code not in details:
             details[code] = client.call("query-meal-detail", dict(base, code=code))
-        request_item, items = assemble(details[code], spec.get("replacements", {}))
+        request_item, items = assemble(details[code], spec.get("replacements", {}), ice=ice, omit=omit)
         coupon = spec.get("coupon")
         if coupon is not None:
             if not isinstance(coupon, dict) or set(coupon) != {"couponId", "couponCode"} or not all(isinstance(v, str) and v for v in coupon.values()):
@@ -128,18 +168,20 @@ def fetch_snapshot(client, plan, on_progress=None, coupon_title=None, coupon_can
         quote = client.call("calculate-price", dict(base, items=[request_item]))
         price = quoted_cents(quote)
         totals = {}
-        missing = [i["name"] for i in items if i["name"] not in nutrition]
+        missing = [i["name"] for i in items if i["name"] not in nutrition or i.get("nutrition_customized")]
         for key in ("energy_kcal", "sodium_mg", "protein_g"):
-            values = [nutrition.get(i["name"], {}).get(key) for i in items]
+            values = [None if i.get("nutrition_customized") else nutrition.get(i["name"], {}).get(key) for i in items]
             totals[key] = None if any(v is None for v in values) else sum(values)
         result = {"id": spec["id"], "name": details[code]["name"], "variant": spec["label"],
                   "store_code": store["code"], "items": items, "price_cents": price,
-                  "spicy": spec.get("spicy"), "nutrition_missing": missing,
+                  "spicy": spec.get("spicy") if spec.get("spicy") is not None else MAIN_SPICY.get(items[0]["code"]), "nutrition_missing": missing,
                   "coupon_requested": coupon is not None,
+                  "take_way_options": [{k:v.get(k) for k in ('code','title','subtitle')} for v in quote.get('takeWayList', [])],
+                  "fees_cents": {k:quote.get(k) for k in ('deliveryPrice','packingPrice','tablewarePrice')},
                   "coupon_applied": None if coupon else False, "quote_tool": "calculate-price", **totals}
         results.append(result)
         if on_progress:
             on_progress(result)
-    return {"mode": "live", "store": store, "captured_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+    return {"mode": "live", "fulfillment": {"channel": plan.get("fulfillment", {}).get("channel", "pickup")}, "store": store, "captured_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
             "source": "麦当劳官方 MCP：calculate-price + list-nutrition-foods",
             "scope": "仅比较本轮候选；不保证全菜单最低价；营养为标准份量的单品加总。", "plans": results}
