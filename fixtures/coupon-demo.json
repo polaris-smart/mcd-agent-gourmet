@@ -1,0 +1,13 @@
+{
+  "mode": "synthetic",
+  "notice": "构造样例，仅演示业务边界；不是任何用户的券包，不代表官方活动或当前可用优惠。",
+  "reference_time": "2026-10-14T01:15:00+08:00",
+  "coupons": [
+    {"title":"示例早餐券 A","enable":0,"tradeStartDate":"2026-10-14","tradeEndDate":"2026-10-14","datetimeText":"2026-10-14 05:00-2026-10-14 10:29 周三 05:00-10:29"},
+    {"title":"示例早餐券 A","enable":0,"tradeStartDate":"2026-10-15","tradeEndDate":"2026-10-15","datetimeText":"2026-10-15 05:00-2026-10-15 10:29 周四 05:00-10:29"},
+    {"title":"示例工作日小食券","enable":0,"tradeStartDate":"2026-10-12","tradeEndDate":"2026-10-18","datetimeText":"周一、二、三、四、五 10:30-23:59"},
+    {"title":"示例已结束券","enable":0,"tradeStartDate":"2026-10-12","tradeEndDate":"2026-10-13","datetimeText":"05:00-10:29"},
+    {"title":"示例时段待核验券","enable":0,"tradeStartDate":"2026-10-14","tradeEndDate":"2026-11-01","datetimeText":"指定活动时段，以活动页为准"},
+    {"title":"示例较晚结束券","enable":0,"tradeStartDate":"2026-10-14","tradeEndDate":"2026-11-01","datetimeText":"每天 10:30-23:59"}
+  ]
+}

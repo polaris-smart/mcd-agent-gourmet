@@ -56,7 +56,7 @@
 
 偏好可按自己的习惯改成无糖或其他可选饮料。门店编码由客户端从查询结果中传递；不能在没有位置依据时声称自动选中了“离你最近”的店。
 
-**实现说明：** Python 和网页使用确定性筛选、排序与非支配集合比较。`SKILL.md` 另包含供 AI 客户端使用的角色审阅指令；那不是本程序已经运行三个独立模型的证明。新版在 WorkBuddy 客户端中的完整对话路径仍需验收，详见 [验证记录](docs/validation.md)。
+**实现说明：** Python 和网页使用确定性筛选、排序与非支配集合比较。`SKILL.md` 引导 AI 客户端理解需求、查询并解释结果，不制造三个独立模型的角色对话。新版在 WorkBuddy 客户端中的完整对话路径仍需验收，详见 [验证记录](docs/validation.md)。
 
 ## 0.3：按普通人的点餐方式使用
 
@@ -84,6 +84,23 @@ python3 demo.py --live --store-code 门店编码 --meal-code 套餐编码 --expa
 
 ### 积分、优惠券与到店/配送
 
+**先看看手里的券：什么时候能用，这一餐用不用得上。**
+
+在 WorkBuddy 中可以直接说：“看看我的券哪些快到期。如果我去天元东路餐厅带走，有没有适合这顿饭的？先别替我改有糖可乐去冰的要求。”Skill 会区分券包、时间窗口和门店适用性；需要选店或确认餐品时再补问。
+
+```bash
+python3 demo.py --coupon-demo       # 构造样例，不联网，不是你的券包
+python3 demo.py --my-coupons        # 只查询自己的券，默认给可读报告
+python3 demo.py --my-coupons --json # 完整脱敏明细，不保存到文件
+# 门店编码来自用户确认后的查询结果；以下是开发者入口
+python3 demo.py --my-coupons --store-code 门店编码
+python3 demo.py --my-coupons --channel delivery --store-code 配送门店编码 --business-code 成对业务编码
+```
+
+报告分别展示官方当前状态、日期原文、本地解释的时间窗口、门店查询结果。早餐未开窗、今天已关窗但明天还能用、工作日限制、跨午夜窗口分别处理。“24 小时内结束”不等于“今天到期”；距截止时长不等于连续可用时长。不认识的限制标待核验，纯日期不补成精确截止时间。同名券不推断叠加，已结束的券不列入临期待关注清单。
+
+门店核验用券标识在内存中匹配，输出不含券码；查询成功也不等于已获优惠。接下来复用下方“可用券查询与按名称核价”，才能确认本次应付。单品券不能强套到三轮套餐；到店查券也不能独自证明支持外带，需要官方核价返回的取餐方式。**本来不需要买，就不必为了用券消费。**
+
 ```bash
 python3 demo.py --member
 python3 demo.py --points-products
@@ -106,7 +123,7 @@ python3 demo.py --list-coupons --channel delivery --store-code 配送门店编�
 已按官方格式补齐元数据与资源目录，可构建 ZIP 分发包：
 
 ```bash
-python3 scripts/build_skill_package.py --output /tmp/mcd-agent-gourmet-0.3.0.zip
+python3 scripts/build_skill_package.py --output /tmp/mcd-agent-gourmet-0.3.1.zip
 ```
 
 包可用于开放平台投稿，**目前未提交审核、未上架**。安装与上架文案见 [市场发布说明](docs/workbuddy-market.md)。Skill 优先使用客户端已配置的麦当劳 MCP；脚本只需 Python 标准库。

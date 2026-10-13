@@ -7,7 +7,8 @@ from pathlib import Path
 from gourmet.core import money_to_cents, review, select_plan
 from gourmet.live import fetch_snapshot, store_coupons, coupon_choices
 from gourmet.mcp import Client, MCPError
-from gourmet.member import member_overview, points_products, points_detail
+from gourmet.member import member_overview, points_products, points_detail, my_coupons
+from gourmet.coupons import coupon_report, render_coupon_report
 from gourmet.stores import search_stores, address_choices, delivery_stores
 from gourmet.channels import order_context
 ROOT = Path(__file__).resolve().parent
@@ -29,6 +30,8 @@ def main(argv=None):
     parser.add_argument('--coupon-title', help='使用查询返回的完整券名称；须与 --live、--coupon-candidate 配合')
     parser.add_argument('--coupon-candidate', help='只对这个候选 ID 提交用券核价，不改变其他候选')
     parser.add_argument('--member', action='store_true', help='显式查询自己的积分、券包和待领取券；不保存个人结果')
+    parser.add_argument('--my-coupons', action='store_true', help='只读我的券：日期、时段、官方状态；可选门店与渠道核验')
+    parser.add_argument('--coupon-demo', action='store_true', help='不联网，体验明确标记的构造券包样例')
     parser.add_argument('--points-products', action='store_true', help='查询积分餐品券目录，不兑换')
     parser.add_argument('--points-detail', type=int, metavar='SPU_ID', help='查询所选积分商品的 SKU 和两阶段费用，不兑换')
     parser.add_argument('--sugar', choices=['any','zero','regular'], default='any', help='饮料：不限 / 无糖 / 含糖；未知不满足指定条件')
@@ -56,21 +59,35 @@ def main(argv=None):
             return Client(max_response_bytes=args.max_response_mb * 1_000_000)
         if (args.city or args.keyword) and not args.search_stores:
             raise ValueError('--city 和 --keyword 仅用于 --search-stores。')
-        if args.store_code and not (args.live or args.list_coupons or args.list_meals):
+        if args.store_code and not (args.live or args.list_coupons or args.list_meals or args.my_coupons):
             raise ValueError('切换门店必须实时核价或查询门店券；历史快照不能改门店。')
         if args.expand and not args.live:
             raise ValueError('--expand 必须与 --live 一起使用，每份组合重新官方核价。')
         if args.omit and not args.live:
             raise ValueError('去配料必须实时读取特调并核价，不修改历史营养值。')
-        actions = [args.addresses, args.delivery_stores, args.search_stores, args.member, args.points_products, args.points_detail is not None, args.list_coupons, args.list_tools, args.list_meals]
+        actions = [args.addresses, args.delivery_stores, args.search_stores, args.member, args.my_coupons, args.coupon_demo, args.points_products, args.points_detail is not None, args.list_coupons, args.list_tools, args.list_meals]
         if sum(actions) > 1 or (any(actions) and (args.live or args.input or args.select or args.save_snapshot or args.coupon_title or args.coupon_candidate)):
             raise ValueError('独立查询入口不能相互混用，也不能与核价、快照保存或选择混用。')
         if args.address_ref is not None and not args.delivery_stores:
             raise ValueError('--address-ref 仅与 --delivery-stores 配合。')
-        if args.business_code and not (args.live or args.list_coupons or args.list_meals):
+        if args.business_code and not (args.live or args.list_coupons or args.list_meals or args.my_coupons):
             raise ValueError('--business-code 仅用于所选场景的实时核价或券查询。')
-        if args.channel != 'pickup' and not (args.live or args.list_coupons or args.list_meals or args.search_stores or args.points_detail or args.addresses or args.delivery_stores):
+        if args.channel != 'pickup' and not (args.live or args.list_coupons or args.list_meals or args.my_coupons or args.search_stores or args.points_detail or args.addresses or args.delivery_stores):
             raise ValueError('不能把历史到店快照改成其他渠道；请使用相应实时查询入口。')
+        if args.my_coupons or args.coupon_demo:
+            if args.plan or args.meal_code or args.ice != 'any':
+                raise ValueError('券包清点不修改餐单；门店核验请传 --store-code 和对应渠道，核价另行执行。')
+            if args.coupon_demo:
+                example = json.loads((ROOT / 'fixtures/coupon-demo.json').read_text(encoding='utf-8'))
+                value = coupon_report(example['coupons'], len(example['coupons']), True,
+                                      now=example['reference_time'], mode='synthetic')
+            else:
+                if not args.store_code and (args.business_code or args.channel != 'pickup'):
+                    raise ValueError('按渠道核验券须提供所选门店；得来速/配送还须提供同次查询的业务编码。')
+                context = {'store':{'code':args.store_code}, 'fulfillment':{'channel':args.channel, 'be_code':args.business_code}} if args.store_code else None
+                value = my_coupons(client(), context)
+            print(json.dumps(value, ensure_ascii=False, indent=2) if args.json else render_coupon_report(value))
+            return 0
         if args.addresses or args.delivery_stores:
             value = address_choices(client()) if args.addresses else delivery_stores(client(), args.address_ref)
             print(json.dumps(value, ensure_ascii=False, indent=2))

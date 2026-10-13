@@ -12,9 +12,9 @@ def build(output):
     files = {'SKILL.md': (ROOT/'SKILL.md').read_text().replace('python3 demo.py', 'python3 scripts/demo.py').replace('--plan fixtures/', '--plan scripts/fixtures/').encode(),
              'LICENSE':(ROOT/'LICENSE').read_bytes()}
     for name in ('demo.py', 'gourmet/__init__.py', 'gourmet/core.py', 'gourmet/mcp.py',
-                 'gourmet/live.py', 'gourmet/member.py', 'gourmet/stores.py', 'gourmet/channels.py',
+                 'gourmet/live.py', 'gourmet/member.py', 'gourmet/coupons.py', 'gourmet/stores.py', 'gourmet/channels.py',
                  'gourmet/customize.py', 'gourmet/catalog.py', 'fixtures/plan.json',
-                 'fixtures/snapshot.json', 'fixtures/customized-snapshot.json'):
+                 'fixtures/snapshot.json', 'fixtures/customized-snapshot.json', 'fixtures/coupon-demo.json'):
         files['scripts/'+name] = (ROOT/name).read_bytes()
     for name in ('references/mcp-capabilities.md', 'docs/validation.md', 'docs/workbuddy-market.md'):
         target = name if name.startswith('references/') else 'references/'+Path(name).name

@@ -24,7 +24,7 @@ python3 demo.py --live --plan fixtures/plan.json
 
 Live calls use the official menu, combo details, nutrition table and `calculate-price`. Failures stop the run; they never silently substitute demo data. Missing nutrition remains unknown. The default plan does not apply coupons. Only the configured candidates are compared, not the entire menu.
 
-The Python/browser comparisons are deterministic functions, **not three independent LLMs**. The accompanying `SKILL.md` also describes optional role-based review in an AI client; that is not evidence of three models running in this program. The executable client only allows read/query/price tools.
+The Python/browser comparisons are deterministic functions, **not three independent LLMs**. The accompanying `SKILL.md` guides the client through understanding preferences, querying facts and explaining comparisons. The executable client only allows read/query/price tools.
 
 Independent M-CODE 2026 entry. Not an official McDonald's product. MIT for original code; official materials retain their applicable terms. If you find the approach useful, a Star or actionable issue is welcome.
 
@@ -40,4 +40,6 @@ Sugar preferences, official ice/ingredient customization, bounded combinations, 
 
 Pareto comparisons remove a candidate only when another is no worse in every chosen dimension and strictly better in at least one. Four-dimensional comparison can retain every candidate; it is not a unique balanced recommendation or a universal health ranking.
 
-Build the WorkBuddy distribution using `python3 scripts/build_skill_package.py --output /tmp/mcd-agent-gourmet-0.3.0.zip`. It is not yet submitted or listed. See [capability boundaries](references/mcp-capabilities.md) and [validation](docs/validation.md), including verified pickup customizations and unverified delivery pricing.
+Version 0.3.1 adds `--my-coupons`: a read-only wallet report separating official status, validity dates, locally interpreted time windows and optional store/channel lookup. It preserves every coupon, handles weekday and overnight windows, labels unsupported text as unknown, and never treats matching names as stackable coupons. Use `--coupon-demo` for explicitly synthetic, offline examples. Store matching uses identifiers only in memory; actual savings still require official pricing. Do not buy something solely because a coupon is expiring.
+
+Build the WorkBuddy distribution using `python3 scripts/build_skill_package.py --output /tmp/mcd-agent-gourmet-0.3.1.zip`. It is not yet submitted or listed. See [capability boundaries](references/mcp-capabilities.md) and [validation](docs/validation.md), including verified pickup customizations and unverified delivery pricing.
