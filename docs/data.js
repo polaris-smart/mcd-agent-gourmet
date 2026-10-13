@@ -3,7 +3,11 @@ window.GOURMET_SNAPSHOTS = [
     "mode": "snapshot",
     "store": {
       "code": "1990622",
-      "name": "麦当劳南京东城汇餐厅"
+      "name": "麦当劳南京东城汇餐厅",
+      "address": "文苑路8-14号、8-15号、8-16商铺",
+      "city": "南京",
+      "address_checked_at": "2026-10-13T16:43:12.911097+00:00",
+      "address_source": "McDonalds MCP query-nearby-stores"
     },
     "captured_at": "2026-10-13T14:14:10+00:00",
     "source": "麦当劳官方 MCP：calculate-price + list-nutrition-foods",
@@ -246,7 +250,11 @@ window.GOURMET_SNAPSHOTS = [
     },
     "store": {
       "code": "1990043",
-      "name": "麦当劳南京洪武餐厅"
+      "name": "麦当劳南京洪武餐厅",
+      "address": "洪武路119号",
+      "city": "南京",
+      "address_checked_at": "2026-10-13T16:43:12.911097+00:00",
+      "address_source": "McDonalds MCP query-nearby-stores"
     },
     "captured_at": "2026-10-13T16:05:17+00:00",
     "source": "麦当劳官方 MCP：calculate-price + list-nutrition-foods",
