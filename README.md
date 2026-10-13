@@ -123,7 +123,7 @@ python3 demo.py --list-coupons --channel delivery --store-code 配送门店编�
 已按官方格式补齐元数据与资源目录，可构建 ZIP 分发包：
 
 ```bash
-python3 scripts/build_skill_package.py --output /tmp/mcd-agent-gourmet-0.3.1.zip
+python3 scripts/build_skill_package.py --output /tmp/mcd-agent-gourmet-0.3.2.zip
 ```
 
 包可用于开放平台投稿，**目前未提交审核、未上架**。安装与上架文案见 [市场发布说明](docs/workbuddy-market.md)。Skill 优先使用客户端已配置的麦当劳 MCP；脚本只需 Python 标准库。
@@ -217,7 +217,7 @@ tests/               Python 回归与 Python/JS 决策一致性
 
 ## 参赛与贡献
 
-M-CODE 2026 独立参赛作品，非麦当劳官方产品。[官方报名记录](https://github.com/M-China/mcd-developer-innovation-challenge/issues/565)。本次修订使用 Codex 辅助，历史 WorkBuddy 使用记录单独保留，不将本次工作冒充 WorkBuddy 对话。
+M-CODE 2026 独立参赛作品，非麦当劳官方产品。[官方报名记录](https://github.com/M-China/mcd-developer-innovation-challenge/issues/565)。本次修订使用 Codex 辅助，WorkBuddy 历史材料与证据状态单独说明，不将本次工作冒充 WorkBuddy 对话。
 
 欢迎提 Issue，描述“我输入了什么、期望什么、实际出现什么”；**不要附 Token、账号或原始优惠券数据**。如果这个透明决策的思路对你有帮助，欢迎点一颗 Star。
 

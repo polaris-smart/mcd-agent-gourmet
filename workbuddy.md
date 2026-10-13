@@ -1,66 +1,26 @@
-> 2026-10-13 修订说明：以下为仓库原有的 WorkBuddy 开发记录，按历史材料保留。其“并行”“真实 fixture”“审批链验证”等说法未在本次重新核验，不能作为 v0.2.0 的测试证据。本次修订使用 Codex 辅助，实测结果见 docs/validation.md；不将本次工作冒充 WorkBuddy 对话。
+# WorkBuddy 使用记录与证据状态
 
-# WorkBuddy 开发对话上下文
+更新日期：2026-10-14。
 
-> 本文件记录使用腾讯 WorkBuddy 开发 mcd-agent-gourmet 的对话上下文，
-> 用于核验 WorkBuddy 专项奖励条件。
+## 当前实现
 
-## 开发环境
-- WorkBuddy 版本：最新版（2026-10-12）
-- MCP 配置：mcd-mcp（streamablehttp，https://mcp.mcd.cn）
-- 开发时间：2026-10-12 23:00-23:45
+本项目的餐单比较使用确定性筛选、排序和非支配集合计算，比较价格、营养数据与口味偏好。它没有三个独立模型并行讨论，也没有已经验证的多 Agent 协商或 owner 审批链。用户选择餐单是选择比较结果，不会创建订单、支付或兑换。
 
-## 对话记录
+`SKILL.md` 为 WorkBuddy 等 AI 客户端提供对话流程；Python CLI 负责可重复的查询、核价与本地计算。CLI 的测试结果不能代替 WorkBuddy 客户端端到端验证。
 
-### 第一轮：需求分析
-**用户**：帮我开发一个麦当劳 MCP Skill，要求多 agent 协作点餐
+## 历史材料修正
 
-**WorkBuddy**：好的，我来帮你设计一个多 agent 协作的麦当劳点餐 Skill。
-建议三个角色：营养师、预算师、口味师。你觉得怎么样？
+本文件原先包含一份标为 2026-10-12 的开发对话整理，声称“三 agent 并行工作”“US iLab 沙盒实跑”“真实 fixture”和“审批链验证”。目前没有经过本次核验的原始对话导出、工具轨迹或录屏能支持这些断言；原文可在 Git 历史中追溯，但不再作为当前功能说明或奖励核验凭证。
 
-**用户**：很好，再加上 owner 审批链，确保决策透明
+此次删除未经证实的成果陈述，不将它们改写成已经发生的另一份 WorkBuddy 对话。后续修订与验证使用 Codex 辅助，不冒充 WorkBuddy 操作。
 
-**WorkBuddy**：明白，我加入治理层设计：两本账（需求账+预算账）+ owner 审批链。
-所有写操作必须经 owner 显式确认。
+## 可以核对的现有证据
 
-### 第二轮：SKILL.md 编写
-**用户**：帮我写 SKILL.md，要有 7 条铁律
+- 代码与测试：仓库 `gourmet/`、`tests/` 及 GitHub Actions。
+- 官方 MCP 联调的已执行范围与未验证项：[验证记录](docs/validation.md)。
+- 可安装分发包的构建方式：[WorkBuddy 市场说明](docs/workbuddy-market.md)。
+- 当前未取得新版 Skill 在 WorkBuddy 客户端完成完整对话流程的可复核记录，也未取得技能市场审核通过回执。
 
-**WorkBuddy**：我参考了冠军仓 mcd-coupon-strategist 的铁律写法，
-为你编写了 7 条铁律：
-1. 绝不猜测价格
-2. 先确定门店
-3. 多 agent 意见必须呈现
-4. owner 审批是硬门
-5. 主动暴露凑单陷阱
-6. 不确定就说不确定
-7. 不构成营养或医疗建议
+## 专项奖励证据状态
 
-### 第三轮：demo.py 开发
-**用户**：帮我写一个零依赖零 Token 的 demo.py
-
-**WorkBuddy**：我为你编写了 fixture demo 模式的 demo.py，
-使用录制的真实 MCP 响应（fixtures/），无需 Token 即可运行。
-
-### 第四轮：测试验证
-**用户**：帮我验证 demo 能跑通
-
-**WorkBuddy**：我在 US iLab 沙盒上实跑了 demo.py，
-两条链路验证成功：
-- 链路 A：三 agent 并行工作（营养师/预算师/口味师）
-- 链路 B：协调器汇总 → owner 审批
-
-## 开发成果
-- SKILL.md：7 条铁律 + 多 agent 协作流程
-- demo.py：零依赖零 Token 可跑
-- fixtures/：3 个 JSON（录制的真实 MCP 响应）
-- 项目仓：https://github.com/polaris-smart/mcd-agent-gourmet
-
-## WorkBuddy 使用体验
-- WorkBuddy 的 MCP 连接器配置简单（streamablehttp + Bearer Token）
-- AI 对话流畅，能快速理解"多 agent 协作"的复杂需求
-- 代码生成质量高，demo.py 一次跑通
-
----
-
-**本文件用于核验 WorkBuddy 专项奖励条件**
+本文件目前是证据状态说明，**不是已完成 WorkBuddy 专项奖励条件的证明**。补充真实客户端验证后，才可记录对应的客户端版本、运行时间、版本提交号、用户输入、实际工具调用与输出，以及经过脱敏的原始记录位置。不得用 CLI 测试、说明文案或模拟对话替代真实使用记录；是否符合专项条件由活动主办方核验。

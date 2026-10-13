@@ -3,7 +3,7 @@ name: mcd-agent-gourmet
 description: 麦门点餐议事会。用户想按预算和口味比较完整的麦当劳餐单，或问“我的券快过期了吗”“这顿能用哪张券”时使用。先确认门店与到店/配送，保留有糖无糖和冰量偏好；分清券包、时段和门店适用性，再使用官方 MCP 核价。只查询核价，不领券不下单。
 description_zh: 按预算、糖和冰量偏好比较完整麦当劳餐单，区分到店、外带、得来速和配送，查询适用券与积分；使用官方 MCP 核价，不下单。
 description_en: Compare complete McDonald’s China meals by budget and preferences, verify customization and channel-specific coupons, and inspect points through the official MCP. Read-only, no ordering.
-version: 0.3.1
+version: 0.3.2
 author: Polaris-Smart LAB
 display_name: 麦门点餐议事会
 agent_created: true

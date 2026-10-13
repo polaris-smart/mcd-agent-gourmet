@@ -5,7 +5,7 @@
 ## 构建与安装
 
 ```bash
-python3 scripts/build_skill_package.py --output /tmp/mcd-agent-gourmet-0.3.1.zip
+python3 scripts/build_skill_package.py --output /tmp/mcd-agent-gourmet-0.3.2.zip
 ```
 
 ZIP 有一个 mcd-agent-gourmet/ 根目录，包含 SKILL.md、LICENSE、references/ 和 scripts/。脚本及 gourmet/、fixtures/ 在 scripts/ 下保持相对位置。只含明确列入的公开文件；不打包 local/、私有配置、历史浏览器资料或账号响应。

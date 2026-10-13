@@ -48,6 +48,21 @@ class CouponTimes(unittest.TestCase):
         self.assertEqual(analyze('2026-10-15 10:29:59')['time_state'], 'within_window')
         self.assertEqual(analyze('2026-10-15 10:30')['urgency'], 'ended')
 
+    def test_date_only_end_keeps_final_evening_window(self):
+        conditions = dict(tradeEndDate='2026-10-16',
+                          datetimeText='周一至周五 10:30-23:59')
+        for clock in ('19:00', '23:59:59'):
+            with self.subTest(clock=clock):
+                r = analyze('2026-10-16 '+clock, **conditions)
+                self.assertEqual(r['time_state'], 'within_window')
+                self.assertEqual(r['urgency'], 'within_24_hours')
+                self.assertGreaterEqual(r['hours_to_deadline'], 0)
+                if clock == '19:00':
+                    self.assertEqual(r['hours_to_deadline'], 5.0)
+                self.assertEqual(r['last_window_ends_before'],
+                                 '2026-10-17T00:00:00+08:00')
+        self.assertEqual(analyze('2026-10-17 00:00', **conditions)['urgency'], 'ended')
+
     def test_expired_deadline_does_not_move(self):
         a, b = (analyze('2026-10-15 '+t) for t in ('11:00','12:00'))
         self.assertEqual(a['last_window_ends_before'], b['last_window_ends_before'])
