@@ -89,7 +89,7 @@ python3 demo.py --live --store-code 门店编码 --meal-code 套餐编码 --expa
 在 WorkBuddy 中可以直接说：“看看我的券哪些快到期。如果我去天元东路餐厅带走，有没有适合这顿饭的？先别替我改有糖可乐去冰的要求。”Skill 会区分券包、时间窗口和门店适用性；需要选店或确认餐品时再补问。
 
 ```bash
-python3 demo.py --coupon-demo       # 构造样例，不联网，不是你的券包
+python3 demo.py --coupon-demo       # 构造样例，不联网；六张均设为官方当前不可用，仅演示日期/时段分档
 python3 demo.py --my-coupons        # 只查询自己的券，默认给可读报告
 python3 demo.py --my-coupons --json # 完整脱敏明细，不保存到文件
 # 门店编码来自用户确认后的查询结果；以下是开发者入口
