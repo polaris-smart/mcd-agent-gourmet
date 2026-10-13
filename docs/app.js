@@ -4,7 +4,7 @@ const names={budget:'预算师',nutrition:'营养观察员',taste:'口味师'};
 const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const money=c=>(c/100).toFixed(2);let result,selected=null;
 function itemName(i){return i.name+(i.customizations?.length?'（'+i.customizations.join('、')+'）':'');}
-function requirements(){return {budget_cents:Math.round(Number($('budget').value)*100),taste:$('taste').value,sodium_limit:$('sodium').value?Number($('sodium').value):null,side:$('fries').checked?'fries':'any',sugar:$('sugar').value,ice:$('ice').value,energy_limit:$('energy').value?Number($('energy').value):null,protein_min:$('protein').value?Number($('protein').value):null};}
+function requirements(){return {budget_cents:Math.round(Number($('budget').value)*100),taste:$('taste').value,sodium_limit:$('sodium').value?Number($('sodium').value):null,side:$('fries').checked?'fries':'any',sugar:$('controls').elements.namedItem('sugar').value,ice:$('ice').value,energy_limit:$('energy').value?Number($('energy').value):null,protein_min:$('protein').value?Number($('protein').value):null};}
 function render(){
  const hadSelection=selected!==null;selected=null;$('receipt').hidden=true;
  $('selection-message').textContent=hadSelection?'条件已改变，之前的选择已清除。请重新确认餐单。':'';
@@ -25,14 +25,14 @@ $('strategy').addEventListener('change',render);
 $('remember').addEventListener('click',()=>{if(!$('controls').checkValidity())return;try{localStorage.setItem('gourmet.preferences.v1',JSON.stringify(requirements()));$('preference-message').textContent='已保存在这个浏览器。只记条件，不保存账号、位置或餐单选择。';}catch{$('preference-message').textContent='浏览器未允许保存；本次仍可正常使用。';}});
 $('forget').addEventListener('click',()=>{try{localStorage.removeItem('gourmet.preferences.v1');$('preference-message').textContent='已清除保存的条件。';}catch{$('preference-message').textContent='浏览器未允许访问保存区。';}});
 $('copy-prompt').addEventListener('click',async()=>{const q=requirements();if(!$('controls').checkValidity())return;
-const text=`请用麦门点餐议事会帮我选一顿完整的麦当劳：预算 ${money(q.budget_cents)} 元，主食、小食、饮料各一份。口味：${$('taste').selectedOptions[0].text}；饮料：${$('sugar').selectedOptions[0].text}；冰量：${$('ice').selectedOptions[0].text}；${q.side==='fries'?'必须有薯条。':''}${q.sodium_limit?'钠上限 '+q.sodium_limit+' mg。':''}${q.energy_limit?'能量上限 '+q.energy_limit+' kcal。':''}${q.protein_min?'蛋白质至少 '+q.protein_min+' g。':''}
+const text=`请用麦门点餐议事会帮我选一顿完整的麦当劳：预算 ${money(q.budget_cents)} 元，主食、小食、饮料各一份。口味：${$('taste').selectedOptions[0].text}；饮料：${{regular:'有糖可乐（必须满足）',zero:'无糖可乐（必须满足）',any:'有糖或无糖可乐都可以'}[q.sugar]}；冰量：${$('ice').selectedOptions[0].text}；${q.side==='fries'?'必须有薯条。':''}${q.sodium_limit?'钠上限 '+q.sodium_limit+' mg。':''}${q.energy_limit?'能量上限 '+q.energy_limit+' kcal。':''}${q.protein_min?'蛋白质至少 '+q.protein_min+' g。':''}
 使用方式：${$('handoff-channel').selectedOptions[0].text}。先确认位置或配送地址，让我选择门店；按当前菜单和官方特调重新核价，最多比较 12 份。若我想用券或积分，请区分兑换与本次渠道适用性。未知条件请说清，不要自动放宽。只查询，不领券、不兑换、不下单。`;
 $('workbuddy-prompt').textContent=text;try{await navigator.clipboard.writeText(text);$('prompt-message').textContent='已复制，粘贴到安装本 Skill 的 WorkBuddy 对话即可。';}catch{$('prompt-message').textContent='请手动选择并复制上方文字。';}});
 try{const saved=JSON.parse(localStorage.getItem('gourmet.preferences.v1')||'null');if(saved&&typeof saved==='object'){
  if(Number.isInteger(saved.budget_cents)&&saved.budget_cents>=100&&saved.budget_cents<=1000000)$('budget').value=saved.budget_cents/100;
  if(['any','spicy','no-spicy'].includes(saved.taste))$('taste').value=saved.taste;
  if(['any','standard','less','none','extra'].includes(saved.ice))$('ice').value=saved.ice;
- if(['any','regular','zero'].includes(saved.sugar))$('sugar').value=saved.sugar;
+ if(['any','regular','zero'].includes(saved.sugar))$('controls').elements.namedItem('sugar').value=saved.sugar;
  if([null,800,1200,1500].includes(saved.sodium_limit))$('sodium').value=saved.sodium_limit??'';
  for(const [id,key] of [['energy','energy_limit'],['protein','protein_min']])if(Number.isInteger(saved[key])&&saved[key]>0)$(id).value=saved[key];
  $('fries').checked=saved.side==='fries';$('preference-message').textContent='已载入你在这个浏览器保存的条件，可随时清除。';

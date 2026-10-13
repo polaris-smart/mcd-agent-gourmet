@@ -21,13 +21,13 @@
 </section>
 <section class="workbench" aria-labelledby="compare-title">
 <div class="section-head"><div><h2 id="compare-title">把你的条件摆上桌</h2><p>试着改一项，看看谁会改变主意。</p></div><button class="quiet" id="reset" type="button">重置条件 <span aria-hidden="true">↺</span></button></div>
-<label for="sample">选择实测样例（每组门店与时间独立）</label><select id="sample"><option value="0">东城汇 · 6 份餐单，冰量未核验</option><option value="1">洪武 · 4 份去冰餐单，含薯条＋无糖</option></select>
+<label for="sample">选择实测样例（每组门店与时间独立）</label><select id="sample"><option value="0">东城汇 · 6 份餐单，冰量未核验</option><option value="1">洪武 · 4 份去冰餐单，有糖／无糖可乐均可选</option></select>
 <p id="data-notice" class="data-notice"></p>
 <form id="controls" class="controls">
 <div class="budget-control"><label for="budget">这餐预算 <span>元</span></label><div class="budget-input"><span aria-hidden="true">¥</span><input id="budget" type="number" value="35" min="1" max="10000" step="0.01" required inputmode="decimal" aria-describedby="budget-error"></div><div class="presets" aria-label="快捷预算"><button type="button" data-budget="30">30</button><button type="button" data-budget="35">35</button><button type="button" data-budget="40">40</button><button type="button" data-budget="50">50</button></div><span id="budget-error" class="error" role="alert"></span></div>
 <div><label for="taste">口味态度</label><select id="taste"><option value="spicy" selected>想吃辣 · 偏好</option><option value="any">都可以</option><option value="no-spicy">不吃辣 · 必须满足</option></select><label class="check" for="fries"><input id="fries" type="checkbox">小食一定要薯条</label></div>
 <div><label for="sodium">这餐的钠上限 <span>mg</span></label><select id="sodium" aria-describedby="sodium-note"><option value="">暂不设置</option><option value="800">800 mg</option><option value="1200">1200 mg</option><option value="1500">1500 mg</option></select><p class="field-note" id="sodium-note">只是你的筛选条件，<br>不是健康标准或医学建议。</p></div>
-<div><label for="sugar">饮料偏好</label><select id="sugar"><option value="any">都可以</option><option value="zero">一定要无糖</option><option value="regular">一定要含糖</option></select><p class="field-note">只认已确认的餐品属性，<br>未知不会当作无糖。</p></div>
+<fieldset class="sugar-choice" aria-describedby="sugar-note"><legend>可乐想喝哪一种？</legend><label class="check"><input type="radio" name="sugar" value="regular">有糖可乐</label><label class="check"><input type="radio" name="sugar" value="zero">无糖可乐</label><label class="check"><input type="radio" name="sugar" value="any" checked>都可以</label><p class="field-note" id="sugar-note">按你的口味选，有糖和无糖都支持。<br>未确认糖类的餐品不会算作符合指定偏好。</p></fieldset>
 <div><label for="ice">饮料冰量</label><select id="ice"><option value="any">暂不指定</option><option value="standard">标准冰</option><option value="less">少冰</option><option value="none">去冰</option><option value="extra">多冰</option></select><p class="field-note">第一组未核验冰量；第二组已核验去冰。其他冰量请实时核价。</p></div>
 <details class="advanced"><summary>更多营养条件（可留空）</summary><label for="energy">能量上限 · kcal</label><input id="energy" type="number" min="1" step="1" placeholder="不限"><label for="protein">蛋白质下限 · g</label><input id="protein" type="number" min="1" step="1" placeholder="不限"><p class="field-note">这些是你设置的条件，不是通用健康标准。膳食纤维数据尚未接入。</p></details>
 </form>
@@ -40,7 +40,7 @@
 </section>
 <section id="receipt" class="receipt" hidden aria-labelledby="receipt-title" tabindex="-1"><div><p class="receipt-kicker">你的选择</p><h2 id="receipt-title">餐单已选好，还没有下单。</h2><p id="chosen"></p><p class="field-note">这是历史快照中的选择。实际购买请在官方渠道重新确认门店、价格与供应。</p></div><button id="copy" class="primary" type="button">复制我的餐单</button></section>
 <p id="selection-message" class="selection-message" role="status"></p>
-<section class="handoff" aria-labelledby="handoff-title"><h2 id="handoff-title">想用自己的门店和优惠券？</h2><p>网页先让你看懂怎么选。把这段话交给已安装本 Skill、已连接麦当劳 MCP 的 WorkBuddy，即可查询自己的门店和当次价格。</p><pre id="workbuddy-prompt">帮我选一顿麦当劳，预算 35 元，主食、小食、饮料各一份，饮料无糖。
+<section class="handoff" aria-labelledby="handoff-title"><h2 id="handoff-title">想用自己的门店和优惠券？</h2><p>网页先让你看懂怎么选。把这段话交给已安装本 Skill、已连接麦当劳 MCP 的 WorkBuddy，即可查询自己的门店和当次价格。</p><pre id="workbuddy-prompt">帮我选一顿麦当劳，预算 35 元，主食、小食、饮料各一份。可乐有糖或无糖都可以，按我选择的偏好查询。
 先问我城市和附近地标，让我选择到店自取门店；再比较最多 12 份官方核价餐单。
 给我省钱、口味和营养数据的取舍，说明未满足的条件，不要自动放宽。
 如果我想用券，查该店可用券并核价；查询积分前先说明用途。
