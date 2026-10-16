@@ -1,8 +1,21 @@
 # Meal Council · McDonald's China MCP
 
-**When budget, taste and nutrition data disagree, see the trade-offs and make the final choice.**
+**"35 yuan, not spicy, regular cola with no ice, takeaway."** Say it once and compare a complete meal — an explicit regular-cola choice is never silently swapped for zero sugar, and when nothing fits it says so instead of selling you a lone soda.
 
-[Try the demo](https://polaris-smart.github.io/mcd-agent-gourmet/) · [中文](README.md)
+[Try the demo in 30 seconds](https://polaris-smart.github.io/mcd-agent-gourmet/) · [中文](README.md)
+
+![Meal Council: you decide budget, store, sugar and ice](docs/assets/hero.png)
+
+**Try it in 30 seconds** — no account, token or install:
+
+- Set the budget to **30 yuan**: nothing qualifies, and the page says so rather than counting a cola as a meal.
+- Back to **35 yuan** and pick **regular cola, no ice**: only matching drinks and ice levels remain; the nutrition comparison never quietly switches you to zero sugar.
+- Choose **not spicy**: only qualifying meals remain. The sodium cap is yours to set — a personal filter, not a health standard.
+- Change a condition after picking a meal: the previous pick is cleared and must be re-confirmed.
+
+![Priced meals with trade-offs side by side](docs/assets/results.png)
+
+The browser compares historical snapshots entirely on your device: no credentials, no ordering, no trackers. Independent contest entry, not an official McDonald's product.
 
 A complete meal comes first: a main, a side and a drink. Deterministic comparisons show lower cost, lower known sodium and closer taste matches among eligible candidates. Several criteria may select the same meal. Regular and zero-sugar cola are equal preference choices; an explicit preference is never silently replaced.
 
