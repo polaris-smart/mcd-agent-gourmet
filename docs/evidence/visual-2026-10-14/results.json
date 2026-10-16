@@ -8,7 +8,7 @@
       "budget": "35",
       "sample": "0",
       "sugar": "any",
-      "dataNotice": "当前为历史快照演示，非实时价格。麦当劳南京天元东路餐厅 · 2026/10/14 00:49:08（北京时间）。实时核价请使用 WorkBuddy 或本机 CLI。",
+      "dataNotice": "当前为历史快照演示，非实时价格。南京某门店（名称与地址已脱敏） · 2026/10/14 00:49:08（北京时间）。实时核价请使用 WorkBuddy 或本机 CLI。",
       "resultSummary": "4 份完整餐单 · 4 份符合当前硬性条件",
       "visibleRows": 4,
       "smallButtons": []
@@ -26,7 +26,7 @@
       "budget": "30",
       "sample": "0",
       "sugar": "any",
-      "dataNotice": "当前为历史快照演示，非实时价格。麦当劳南京天元东路餐厅 · 2026/10/14 00:49:08（北京时间）。实时核价请使用 WorkBuddy 或本机 CLI。",
+      "dataNotice": "当前为历史快照演示，非实时价格。南京某门店（名称与地址已脱敏） · 2026/10/14 00:49:08（北京时间）。实时核价请使用 WorkBuddy 或本机 CLI。",
       "resultSummary": "4 份完整餐单 · 0 份符合当前硬性条件",
       "visibleRows": 4,
       "smallButtons": []
@@ -38,7 +38,7 @@
       "budget": "35",
       "sample": "0",
       "sugar": "regular",
-      "dataNotice": "当前为历史快照演示，非实时价格。麦当劳南京天元东路餐厅 · 2026/10/14 00:49:08（北京时间）。实时核价请使用 WorkBuddy 或本机 CLI。",
+      "dataNotice": "当前为历史快照演示，非实时价格。南京某门店（名称与地址已脱敏） · 2026/10/14 00:49:08（北京时间）。实时核价请使用 WorkBuddy 或本机 CLI。",
       "resultSummary": "4 份完整餐单 · 1 份符合当前硬性条件",
       "visibleRows": 1,
       "smallButtons": []
@@ -79,7 +79,7 @@
       "budget": "35",
       "sample": "0",
       "sugar": "any",
-      "dataNotice": "当前为历史快照演示，非实时价格。麦当劳南京天元东路餐厅 · 2026/10/14 00:49:08（北京时间）。实时核价请使用 WorkBuddy 或本机 CLI。",
+      "dataNotice": "当前为历史快照演示，非实时价格。南京某门店（名称与地址已脱敏） · 2026/10/14 00:49:08（北京时间）。实时核价请使用 WorkBuddy 或本机 CLI。",
       "resultSummary": "4 份完整餐单 · 4 份符合当前硬性条件",
       "visibleRows": 4,
       "smallButtons": []
@@ -100,7 +100,7 @@
       "budget": "35",
       "sample": "0",
       "sugar": "any",
-      "dataNotice": "当前为历史快照演示，非实时价格。麦当劳南京天元东路餐厅 · 2026/10/14 00:49:08（北京时间）。实时核价请使用 WorkBuddy 或本机 CLI。",
+      "dataNotice": "当前为历史快照演示，非实时价格。南京某门店（名称与地址已脱敏） · 2026/10/14 00:49:08（北京时间）。实时核价请使用 WorkBuddy 或本机 CLI。",
       "resultSummary": "4 份完整餐单 · 4 份符合当前硬性条件",
       "visibleRows": 4,
       "smallButtons": []

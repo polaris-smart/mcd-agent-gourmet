@@ -15,7 +15,7 @@ function open(saved){
 }
 (async()=>{
  const x=open(),{w,get,change}=x;
- assert.match(get('store-name').textContent,/天元东路/);
+ assert.match(get('store-name').textContent,/已脱敏/);
  assert.equal(get('sample').options.length,w.GOURMET_SNAPSHOTS.length);
  assert.equal(get('taste').value,'any');assert.equal(get('controls').elements.namedItem('sugar').value,'any');
  assert.equal(get('nutrition-options').open,false);
@@ -24,9 +24,9 @@ function open(saved){
  w.document.querySelector('[name=sugar][value=regular]').click();
  assert.equal(get('plans').children.length,2);
  assert.ok([...get('plans').children].every(row=>!row.textContent.includes('无糖可口可乐')));
- change('ice','none');change('handoff-location','南京市江宁区天元东路');
+ change('ice','none');change('handoff-location','南京市江宁区');
  get('copy-prompt').click();await Promise.resolve();
- assert.match(x.clipboard(),/有糖可乐（必须满足）/);assert.match(x.clipboard(),/天元东路/);assert.match(x.clipboard(),/去冰/);
+ assert.match(x.clipboard(),/有糖可乐（必须满足）/);assert.match(x.clipboard(),/南京市江宁区/);assert.match(x.clipboard(),/去冰/);
  get('plans').querySelector('[data-select]').click();assert.equal(get('receipt').hidden,false);
  get('copy').click();await Promise.resolve();assert.match(x.clipboard(),/388号/);assert.match(x.clipboard(),/历史快照/);
  const old=w.GOURMET_SNAPSHOTS.findIndex(s=>s.store.code==='1990622');
