@@ -3,9 +3,9 @@ window.GOURMET_SNAPSHOTS = [
     "mode": "snapshot",
     "captured_at": "2026-10-17T02:14:12+08:00",
     "store": {
-      "code": "1990043",
-      "name": "麦当劳南京洪武餐厅",
-      "address": "洪武路119号",
+      "code": "已脱敏",
+      "name": "南京某门店（名称与地址已脱敏）",
+      "address": "（门店名与地址已脱敏）",
       "city": "南京"
     },
     "source": {
@@ -37,7 +37,7 @@ window.GOURMET_SNAPSHOTS = [
         "id": "single-pick",
         "name": "单品直选",
         "variant": "巨无霸 + 中薯条 + 可乐（单点）",
-        "store_code": "1990043",
+        "store_code": "已脱敏",
         "items": [
           {
             "code": "1100",
@@ -74,7 +74,7 @@ window.GOURMET_SNAPSHOTS = [
         "id": "combo-3pc",
         "name": "巨无霸三件套",
         "variant": "套餐（巨无霸 + 中薯条 + 可乐中杯）",
-        "store_code": "1990043",
+        "store_code": "已脱敏",
         "items": [
           {
             "code": "1100",
@@ -411,12 +411,12 @@ window.GOURMET_SNAPSHOTS = [
       "channel": "pickup"
     },
     "store": {
-      "code": "1990043",
-      "name": "麦当劳南京洪武餐厅",
-      "address": "洪武路119号",
+      "code": "已脱敏",
+      "name": "南京某门店（名称与地址已脱敏）",
+      "address": "（门店名与地址已脱敏）",
       "city": "南京",
       "address_checked_at": "2026-10-13T16:43:12.911097+00:00",
-      "address_source": "McDonalds MCP query-nearby-stores"
+      "address_source": "（来源隐藏）"
     },
     "captured_at": "2026-10-13T16:05:17+00:00",
     "source": "麦当劳官方 MCP：calculate-price + list-nutrition-foods",
@@ -426,7 +426,7 @@ window.GOURMET_SNAPSHOTS = [
         "id": "9900005456-4810-3050",
         "name": "麦辣鸡腿汉堡三件套",
         "variant": "中薯条 · 可乐中杯",
-        "store_code": "1990043",
+        "store_code": "已脱敏",
         "items": [
           {
             "code": "1440",
@@ -495,7 +495,7 @@ window.GOURMET_SNAPSHOTS = [
         "id": "9900005456-4810-3071",
         "name": "麦辣鸡腿汉堡三件套",
         "variant": "中薯条 · 无糖可口可乐中杯",
-        "store_code": "1990043",
+        "store_code": "已脱敏",
         "items": [
           {
             "code": "1440",
@@ -564,7 +564,7 @@ window.GOURMET_SNAPSHOTS = [
         "id": "9900005464-4810-3050",
         "name": "双层吉士汉堡中套餐",
         "variant": "中薯条 · 可乐中杯",
-        "store_code": "1990043",
+        "store_code": "已脱敏",
         "items": [
           {
             "code": "1120",
@@ -633,7 +633,7 @@ window.GOURMET_SNAPSHOTS = [
         "id": "9900005464-4810-3071",
         "name": "双层吉士汉堡中套餐",
         "variant": "中薯条 · 无糖可口可乐中杯",
-        "store_code": "1990043",
+        "store_code": "已脱敏",
         "items": [
           {
             "code": "1120",
@@ -703,12 +703,12 @@ window.GOURMET_SNAPSHOTS = [
   {
     "mode": "snapshot",
     "store": {
-      "code": "1990622",
-      "name": "麦当劳南京东城汇餐厅",
-      "address": "文苑路8-14号、8-15号、8-16商铺",
+      "code": "已脱敏",
+      "name": "南京某门店（名称与地址已脱敏）",
+      "address": "（门店名与地址已脱敏）",
       "city": "南京",
       "address_checked_at": "2026-10-13T16:43:12.911097+00:00",
-      "address_source": "McDonalds MCP query-nearby-stores"
+      "address_source": "（来源隐藏）"
     },
     "captured_at": "2026-10-13T14:14:10+00:00",
     "source": "麦当劳官方 MCP：calculate-price + list-nutrition-foods",
@@ -718,7 +718,7 @@ window.GOURMET_SNAPSHOTS = [
         "id": "chicken-classic",
         "name": "麦辣鸡腿汉堡三件套",
         "variant": "中薯条 · 可乐",
-        "store_code": "1990622",
+        "store_code": "已脱敏",
         "items": [
           {
             "code": "1440",
@@ -756,7 +756,7 @@ window.GOURMET_SNAPSHOTS = [
         "id": "chicken-corn",
         "name": "麦辣鸡腿汉堡三件套",
         "variant": "玉米杯 · 无糖可乐",
-        "store_code": "1990622",
+        "store_code": "已脱敏",
         "items": [
           {
             "code": "1440",
@@ -794,7 +794,7 @@ window.GOURMET_SNAPSHOTS = [
         "id": "cheese-classic",
         "name": "双层吉士汉堡中套餐",
         "variant": "中薯条 · 可乐",
-        "store_code": "1990622",
+        "store_code": "已脱敏",
         "items": [
           {
             "code": "1120",
@@ -832,7 +832,7 @@ window.GOURMET_SNAPSHOTS = [
         "id": "cheese-corn",
         "name": "双层吉士汉堡中套餐",
         "variant": "玉米杯 · 无糖可乐",
-        "store_code": "1990622",
+        "store_code": "已脱敏",
         "items": [
           {
             "code": "1120",
@@ -870,7 +870,7 @@ window.GOURMET_SNAPSHOTS = [
         "id": "fish-classic",
         "name": "麦香鱼中套餐",
         "variant": "中薯条 · 可乐",
-        "store_code": "1990622",
+        "store_code": "已脱敏",
         "items": [
           {
             "code": "1600",
@@ -908,7 +908,7 @@ window.GOURMET_SNAPSHOTS = [
         "id": "fish-corn",
         "name": "麦香鱼中套餐",
         "variant": "玉米杯 · 无糖可乐",
-        "store_code": "1990622",
+        "store_code": "已脱敏",
         "items": [
           {
             "code": "1600",

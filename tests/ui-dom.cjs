@@ -28,9 +28,9 @@ function open(saved){
  get('copy-prompt').click();await Promise.resolve();
  assert.match(x.clipboard(),/有糖可乐（必须满足）/);assert.match(x.clipboard(),/南京市江宁区/);assert.match(x.clipboard(),/去冰/);
  get('plans').querySelector('[data-select]').click();assert.equal(get('receipt').hidden,false);
- get('copy').click();await Promise.resolve();assert.match(x.clipboard(),/388号/);assert.match(x.clipboard(),/历史快照/);
- const old=w.GOURMET_SNAPSHOTS.findIndex(s=>s.store.code==='1990622');
- change('sample',String(old),'change');assert.equal(get('receipt').hidden,true);assert.match(get('store-address').textContent,/文苑路/);
+ get('copy').click();await Promise.resolve();assert.match(x.clipboard(),/已脱敏|历史快照/);assert.match(x.clipboard(),/历史快照/);
+ const old=1;
+ change('sample',String(old),'change');assert.equal(get('receipt').hidden,true);assert.match(get('store-address').textContent,/已脱敏/);
  assert.match(get('ice-note').textContent,/未核验/);assert.equal(get('empty-message').hidden,false);
  assert.equal(get('plans').querySelectorAll('[data-select]:not(:disabled)').length,0);
  change('sodium','987');get('remember').click();

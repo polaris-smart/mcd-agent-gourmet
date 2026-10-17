@@ -1,11 +1,56 @@
 {
-  "store": {"code": "1990622", "name": "麦当劳南京东城汇餐厅"},
+  "store": {
+    "code": "1990000",
+    "name": "演示门店（名称已脱敏）"
+  },
   "candidates": [
-    {"id": "chicken-classic", "product_code": "9900005456", "label": "中薯条 · 可乐", "spicy": true},
-    {"id": "chicken-corn", "product_code": "9900005456", "label": "玉米杯 · 无糖可乐", "spicy": true, "replacements": {"2": "4437", "3": "3071"}},
-    {"id": "cheese-classic", "product_code": "9900005464", "label": "中薯条 · 可乐", "spicy": false},
-    {"id": "cheese-corn", "product_code": "9900005464", "label": "玉米杯 · 无糖可乐", "spicy": false, "replacements": {"2": "4437", "3": "3071"}},
-    {"id": "fish-classic", "product_code": "9900005460", "label": "中薯条 · 可乐", "spicy": false},
-    {"id": "fish-corn", "product_code": "9900005460", "label": "玉米杯 · 无糖可乐", "spicy": false, "replacements": {"2": "4437", "3": "3071"}}
+    {
+      "id": "chicken-classic",
+      "product_code": "9900005456",
+      "label": "中薯条 · 可乐",
+      "spicy": true
+    },
+    {
+      "id": "chicken-corn",
+      "product_code": "9900005456",
+      "label": "玉米杯 · 无糖可乐",
+      "spicy": true,
+      "replacements": {
+        "2": "4437",
+        "3": "3071"
+      }
+    },
+    {
+      "id": "cheese-classic",
+      "product_code": "9900005464",
+      "label": "中薯条 · 可乐",
+      "spicy": false
+    },
+    {
+      "id": "cheese-corn",
+      "product_code": "9900005464",
+      "label": "玉米杯 · 无糖可乐",
+      "spicy": false,
+      "replacements": {
+        "2": "4437",
+        "3": "3071"
+      }
+    },
+    {
+      "id": "fish-classic",
+      "product_code": "9900005460",
+      "label": "中薯条 · 可乐",
+      "spicy": false
+    },
+    {
+      "id": "fish-corn",
+      "product_code": "9900005460",
+      "label": "玉米杯 · 无糖可乐",
+      "spicy": false,
+      "replacements": {
+        "2": "4437",
+        "3": "3071"
+      }
+    }
   ]
 }

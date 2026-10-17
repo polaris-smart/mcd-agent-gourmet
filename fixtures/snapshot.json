@@ -1,12 +1,12 @@
 {
   "mode": "snapshot",
   "store": {
-    "code": "1990622",
-    "name": "麦当劳南京东城汇餐厅",
-    "address": "文苑路8-14号、8-15号、8-16商铺",
+    "code": "已脱敏",
+    "name": "南京某门店（名称与地址已脱敏）",
+    "address": "（门店名与地址已脱敏）",
     "city": "南京",
     "address_checked_at": "2026-10-13T16:43:12.911097+00:00",
-    "address_source": "McDonalds MCP query-nearby-stores"
+    "address_source": "（来源隐藏）"
   },
   "captured_at": "2026-10-13T14:14:10+00:00",
   "source": "麦当劳官方 MCP：calculate-price + list-nutrition-foods",
@@ -16,7 +16,7 @@
       "id": "chicken-classic",
       "name": "麦辣鸡腿汉堡三件套",
       "variant": "中薯条 · 可乐",
-      "store_code": "1990622",
+      "store_code": "已脱敏",
       "items": [
         {
           "code": "1440",
@@ -54,7 +54,7 @@
       "id": "chicken-corn",
       "name": "麦辣鸡腿汉堡三件套",
       "variant": "玉米杯 · 无糖可乐",
-      "store_code": "1990622",
+      "store_code": "已脱敏",
       "items": [
         {
           "code": "1440",
@@ -92,7 +92,7 @@
       "id": "cheese-classic",
       "name": "双层吉士汉堡中套餐",
       "variant": "中薯条 · 可乐",
-      "store_code": "1990622",
+      "store_code": "已脱敏",
       "items": [
         {
           "code": "1120",
@@ -130,7 +130,7 @@
       "id": "cheese-corn",
       "name": "双层吉士汉堡中套餐",
       "variant": "玉米杯 · 无糖可乐",
-      "store_code": "1990622",
+      "store_code": "已脱敏",
       "items": [
         {
           "code": "1120",
@@ -168,7 +168,7 @@
       "id": "fish-classic",
       "name": "麦香鱼中套餐",
       "variant": "中薯条 · 可乐",
-      "store_code": "1990622",
+      "store_code": "已脱敏",
       "items": [
         {
           "code": "1600",
@@ -206,7 +206,7 @@
       "id": "fish-corn",
       "name": "麦香鱼中套餐",
       "variant": "玉米杯 · 无糖可乐",
-      "store_code": "1990622",
+      "store_code": "已脱敏",
       "items": [
         {
           "code": "1600",

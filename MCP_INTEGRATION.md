@@ -20,7 +20,7 @@ v0.3.0 新增会员积分、券包、待领券、积分餐品券目录及详情�
 
 | 工具 | 已实现用途 |
 |---|---|
-| `query-nearby-stores` | CLI Client/Skill 可查询门店；本次真实联调用它确认南京东城汇餐厅 |
+| `query-nearby-stores` | CLI Client/Skill 可查询门店；本次真实联调用它确认演示门店 |
 | `query-meals` | 实时验证所选套餐在当前门店菜单内 |
 | `query-meal-detail` | 读取真实套餐轮次与可替换项，生成完整明细 |
 | `list-nutrition-foods` | 解析官方表格，按名称精确匹配并加总；缺失保留 null |

@@ -6,7 +6,7 @@ import hashlib
 
 def search_stores(client, city, keyword, channel="pickup"):
     if not city or not city.strip() or not keyword or not keyword.strip():
-        raise ValueError('请输入城市和位置关键词，例如 --city 南京 --keyword 东城汇。')
+        raise ValueError('请输入城市和位置关键词，例如 --city 南京 --keyword 新街口。')
     if channel not in ('pickup','drive'):
         raise ValueError('配送门店必须先选择配送地址，再使用 --delivery-stores。')
     rows = client.call('query-nearby-stores', {'beType':1 if channel == 'pickup' else 5, 'searchType':2, 'city':city.strip(), 'keyword':keyword.strip()})
