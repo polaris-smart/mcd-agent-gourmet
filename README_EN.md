@@ -4,7 +4,7 @@
 
 [Try the demo in 30 seconds](https://polaris-smart.github.io/mcd-agent-gourmet/) · [中文](README.md)
 
-![Meal Council: you decide budget, store, sugar and ice](docs/assets/hero.png)
+![First screen: official per-order pricing, one answer, a copyable order card](docs/assets/hero.png)
 
 **Try it in 30 seconds** — no account, token or install:
 
@@ -13,7 +13,7 @@
 - Choose **not spicy**: only qualifying meals remain. The sodium cap is yours to set — a personal filter, not a health standard.
 - Change a condition after picking a meal: the previous pick is cleared and must be re-confirmed.
 
-![Priced meals with trade-offs side by side](docs/assets/results.png)
+![The full comparison opens only when you ask for it](docs/assets/results.png)
 
 The browser compares historical snapshots entirely on your device: no credentials, no ordering, no trackers. Independent contest entry, not an official McDonald's product.
 

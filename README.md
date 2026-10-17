@@ -10,7 +10,7 @@
 
 > **English TL;DR** — A read-only McDonald's China MCP client + agent skill. Say *"35 yuan, not spicy, regular cola, no ice, takeaway"* and it compares **complete** meals (main + side + drink) using official per-order pricing, tells you **why each rejected meal lost** (dominated by which candidate, on which axis), and when nothing fits it says so — plus how much budget would actually be needed. An explicit regular-cola choice is never silently swapped for zero sugar. [English README](README_EN.md) · [30-second demo](https://polaris-smart.github.io/mcd-agent-gourmet/)
 
-![麦门点餐议事会：预算、门店、糖与冰量都由你决定](docs/assets/hero.png)
+![首屏：只认官方当次核价，直接给一个答案和可复制的点单卡](docs/assets/hero.png)
 
 ## 先试 30 秒
 
@@ -21,7 +21,7 @@
 - 把预算改成 **30 元**：它说没有方案，并告诉你最低需要多少（¥36.50）——不硬凑。
 - 想看别的，点 **「我想比较」**：才展开全部候选与「为什么不是它」。默认不给表格。
 
-![核价与取舍并排展示：四份完整餐单，价格、钠含量与取舍一览](docs/assets/results.png)
+![点「我想比较」才展开全部候选与「为什么不是它」](docs/assets/results.png)
 
 网页使用历史快照，所有比较在你的浏览器内完成，不收集凭证、不调用下单、不加入追踪器；本项目为独立参赛作品，非麦当劳官方产品。也可看 [35 秒录屏演示](https://polaris-smart.github.io/mcd-agent-gourmet/assets/demo.mp4)（v0.2 界面录制）。
 
