@@ -17,6 +17,20 @@
 
 The browser compares historical snapshots entirely on your device: no credentials, no ordering, no trackers. Independent contest entry, not an official McDonald's product.
 
+## How this relates to the McDonald's app
+
+The app is where you **order**; this is where the decision gets settled **before** you open it.
+
+- The app gives you one cart: you page through the menu and assemble the meal yourself. There is no "give me a few complete meals with the trade-off for each" entry point.
+- The app will not tell you "nothing fits this budget". This does, and it adds **how much budget would actually be needed and how many meals that unlocks** (budget ladder, below).
+- Nothing here claims coupons, redeems points, orders or pays — there is no cart. It has no reason to talk you into buying more.
+
+## 0.4: it also explains why each rejected meal lost
+
+- **Frontier explanations.** For each comparison axis (price & sodium / taste & sodium / multi-nutrient) every other candidate is reported as **dominated by which candidate, on which axis** — e.g. "from the price & sodium axis, why not cheese-classic: dominated by cheese-corn — lower price (¥32.00 vs ¥33.50); lower sodium (1053 mg vs 1182 mg)". Ties stay on the frontier; candidates with incomplete data are listed separately as excluded, never scored as zero.
+- **Budget ladder.** When nothing fits, it no longer stops at a single "minimum needed" figure: it gives steps — "¥32.00 → 2 meals; ¥32.50 → 3; ¥33.50 → 5" — and states that **only the budget changes**; taste, side, drink and nutrition conditions are never relaxed.
+- Both are explanations only: the tool never rewrites your conditions, never raises your budget on its own, and never produces a health score.
+
 A complete meal comes first: a main, a side and a drink. Deterministic comparisons show lower cost, lower known sodium and closer taste matches among eligible candidates. Several criteria may select the same meal. Regular and zero-sugar cola are equal preference choices; an explicit preference is never silently replaced.
 
 The browser demo includes three separate Nanjing restaurant snapshots, each with its own address, timestamp and **historical, officially priced meal configurations**. It needs no account or token. These are not current prices or dietary recommendations. Nothing is ordered or paid for.

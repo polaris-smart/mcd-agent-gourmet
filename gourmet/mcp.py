@@ -13,6 +13,9 @@ READ_TOOLS = frozenset({
     "query-my-account", "query-my-coupons", "available-coupons",
     "mall-points-products", "mall-product-detail",
     "delivery-query-addresses", "delivery-query-stores",
+    # 复购入口「跟上次一样」只读历史订单；官方 order-list/query-order 均为只读工具。
+    # 只复用门店与商品编码，一律按当次价重新核价。
+    "order-list", "query-order",
 })
 
 
@@ -67,6 +70,10 @@ def tool_data(result):
         if value.get("code") not in (None, 0, "0", 200, "200") or value.get("success") is False:
             if value.get('code') == 600057:
                 raise MCPError('门店可能已关闭或不在营业时间；请主动选择营业门店，未自动换店。')
+            detail = value.get('message') or value.get('msg')
+            code = value.get('code')
+            if isinstance(detail, str) and detail.strip():
+                raise MCPError('麦当劳业务接口返回失败（code=%s）：%s；本轮已停止。' % (code, detail.strip()[:120]))
             raise MCPError("麦当劳业务接口返回失败；本轮已停止。")
         return value.get("data", value)
     return value

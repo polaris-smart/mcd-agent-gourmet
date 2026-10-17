@@ -2,7 +2,7 @@
 const $=id=>document.getElementById(id);let data=window.GOURMET_DATA;
 const names={budget:'价格较低',nutrition:'钠含量较少',taste:'更贴近口味'};
 const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const money=c=>(c/100).toFixed(2);let result,selected=null;
+const money=c=>(c/100).toFixed(2);let result,selected=null,lastCard=null;
 function itemName(i){return i.name+(i.customizations?.length?'（'+i.customizations.join('、')+'）':'');}
 function requirements(){return {budget_cents:Math.round(Number($('budget').value)*100),taste:$('taste').value,sodium_limit:$('sodium').value?Number($('sodium').value):null,side:$('fries').checked?'fries':'any',sugar:$('controls').elements.namedItem('sugar').value,ice:$('ice').value,energy_limit:$('energy').value?Number($('energy').value):null,protein_min:$('protein').value?Number($('protein').value):null};}
 function render(){
@@ -10,8 +10,9 @@ function render(){
  $('selection-message').textContent=hadSelection?'条件已改变，之前的选择已清除。请重新确认餐单。':'';
  updatePrompt();
  const valid=$('controls').checkValidity();$('budget-error').textContent=valid?'':'请检查预算（1～10000 元、最多两位小数）和营养条件（正整数或留空）。';
- if(!valid){$('plans').replaceChildren();$('voices').replaceChildren();$('tradeoffs').replaceChildren();$('result-summary').textContent='先填一个有效预算';$('consensus').textContent='';$('empty-message').hidden=true;result=null;return;}
+ if(!valid){$('answer').hidden=true;$('plans').replaceChildren();$('voices').replaceChildren();$('tradeoffs').replaceChildren();$('result-summary').textContent='先填一个有效预算';$('consensus').textContent='';$('empty-message').hidden=true;result=null;return;}
  result=GourmetReview.evaluate(data,requirements());
+ renderAnswer();
  const picks=result.tradeoffs[$('strategy').value].map(id=>result.plans.find(p=>p.id===id));
  $('tradeoffs').innerHTML=picks.length?picks.map(p=>`<p><strong>${escape(p.name)} · ${escape(p.variant)}</strong><br>¥${money(p.price_cents)} · 钠 ${p.sodium_mg} mg · ${p.energy_kcal??'未知'} kcal · 蛋白质 ${p.protein_g??'未知'} g${result.requirements.taste==='spicy'?' · '+(p.taste_match?'保留辣味偏好':'无辣味，供取舍'):''}</p>`).join(''):'<p>当前没有满足条件且钠数据完整的取舍候选。</p>';
  document.querySelectorAll('[data-budget]').forEach(b=>b.setAttribute('aria-pressed',Number(b.dataset.budget)*100===result.requirements.budget_cents?'true':'false'));
@@ -22,6 +23,25 @@ function render(){
  $('voices').innerHTML=Object.entries(names).map(([role,name])=>{const p=result.plans.find(x=>x.id===result.reviewers[role]);const desc=!p?'没有符合条件且数据足够的餐单':role==='budget'?`当次核价 ¥${money(p.price_cents)}，在可选餐单中价格较低。`:role==='nutrition'?`钠 ${p.sodium_mg} mg，在可选且数据完整的餐单中较少。`:result.requirements.taste==='spicy'&&!p.spicy?'没有满足其他条件的辣味餐单；这个是备选。':result.requirements.taste==='spicy'?'这份保留了你想吃的辣味。':'这份符合口味条件，同等情况下先看价格。';return `<div class="voice"><span class="avatar" aria-hidden="true">${role==='budget'?'省':role==='nutrition'?'钠':'味'}</span><div><h3>${name}</h3><p>${p?escape(p.name):'先不推荐'}</p><small>${p?escape(p.variant)+' · ':''}${escape(desc)}</small></div></div>`}).join('');
  $('plans').innerHTML=result.plans.filter(p=>p.eligible||$('show-excluded').checked||!result.feasible_count).map(p=>{let tags=Object.entries(result.reviewers).filter(([,id])=>id===p.id).map(([role])=>`<span class="role-tag">${names[role]}</span>`).join('');let note=p.reasons.join('；')||(result.requirements.taste==='spicy'&&!p.spicy?'符合硬性条件，但没有辣味。':'符合硬性条件。'+(p.spicy?'保留辣味。':'非辣味模板。'));if(p.sodium_mg==null)note+=' 营养数据不完整。';return `<tr class="${p.eligible?'':'blocked'}" data-plan="${p.id}"><td><span class="meal-title">${escape(p.name)}</span><span class="meal-items">${p.items.map(i=>escape(itemName(i))).join(' + ')}</span>${tags}</td><td><span class="price">¥${money(p.price_cents)}</span><span class="remaining">${p.remaining_cents>=0?'余量 ¥'+money(p.remaining_cents):'超出 ¥'+money(-p.remaining_cents)}</span></td><td class="nutrients">${p.sodium_mg==null?'钠未知':p.sodium_mg+' mg 钠'}<small>${p.energy_kcal==null?'能量未知':p.energy_kcal+' kcal'} · ${p.protein_g==null?'蛋白质未知':p.protein_g+' g 蛋白质'}</small></td><td class="tradeoff">${escape(note)}</td><td><button type="button" class="choose" data-select="${p.id}" aria-pressed="false" aria-label="选择 ${escape(p.name+' '+p.variant)}" ${p.eligible?'':'disabled'}>${p.eligible?'选这份':'不符合条件'}</button></td></tr>`}).join('');
 }
+function renderAnswer(){
+ const pick=GourmetReview.defaultPick(result);
+ const section=$('answer');
+ if(!pick){section.hidden=true;lastCard=null;return;}
+ section.hidden=false;
+ $('answer-meal').textContent=pick.name+' · '+pick.variant;
+ $('answer-price').textContent='¥'+money(pick.price_cents);
+ const ways=Array.isArray(pick.take_way_options)?pick.take_way_options:[];
+ const way=ways.length&&ways[0]&&ways[0].title?ways[0].title:'到店自取';
+ $('answer-store').textContent=' '+data.store.name+' · '+way;
+ $('answer-reason').textContent=GourmetReview.pickReason(result,pick.id);
+ lastCard=GourmetReview.orderCard(result,pick.id);
+ $('card-lines').innerHTML=lastCard.lines.map(line=>`<p>${escape(line)}</p>`).join('');
+ $('card').hidden=true;$('card-message').textContent='';
+}
+$('go-card').addEventListener('click',()=>{$('card').hidden=false;$('card').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'nearest'});$('card').focus({preventScroll:true});});
+$('copy-card').addEventListener('click',async()=>{if(!lastCard)return;try{await navigator.clipboard.writeText(lastCard.text);$('card-message').textContent='已复制，照着在 App 或柜台点即可。';}catch{$('card-message').textContent='请手动选择并复制上方文字。';}});
+$('open-compare').addEventListener('click',()=>{const box=$('compare-wrap');if(!box)return;box.open=true;box.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'start'});});
+$('change-conditions').addEventListener('click',()=>$('budget').focus());
 $('strategy').addEventListener('change',render);
 $('show-excluded').addEventListener('change',render);
 $('handoff-location').addEventListener('input',updatePrompt);

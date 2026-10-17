@@ -22,10 +22,12 @@
 
 ## 2026-10-14 WorkBuddy 客户端实测
 
-用户将 v0.3.2 ZIP 导入本机 WorkBuddy，并确认可用。Codex 在客户端“已安装技能”中看到 `mcd-agent-gourmet`，开关开启，详情显示 `version: 0.3.2`。随后使用“去试试”在附加该 Skill 的新对话中发送明确限定为本地构造数据的测试请求。客户端对话报告实际在 `/Users/interia/.workbuddy/skills/mcd-agent-gourmet` 下执行 `python3 scripts/demo.py --coupon-demo --json`，退出码 0、stderr 为空；输出为合法 JSON，`mode: synthetic`、总数与已读取数均为 6。此处记载的是客户端界面显示的执行回报；代码中该分支在构造 MCP Client 前返回，且读取的是随包分发的构造 fixture。
+用户将 v0.3.2 ZIP 导入本机 WorkBuddy，并确认可用。Codex 在客户端“已安装技能”中看到 `mcd-agent-gourmet`，开关开启，详情显示 `version: 0.3.2`。随后使用“去试试”在附加该 Skill 的新对话中发送明确限定为本地构造数据的测试请求。客户端对话报告实际在 `<本地路径>` 下执行 `python3 scripts/demo.py --coupon-demo --json`，退出码 0、stderr 为空；输出为合法 JSON，`mode: synthetic`、总数与已读取数均为 6。此处记载的是客户端界面显示的执行回报；代码中该分支在构造 MCP Client 前返回，且读取的是随包分发的构造 fixture。
 
 这次验证覆盖本机安装、Skill 附加和离线构造券演示。尚未在 WorkBuddy 客户端完成真实 MCP 券包、选店与用券核价的整条对话，也未取得技能市场提交或审核回执。对话中没有使用真实账户、Token 或配送地址。
 
 ## 专项奖励证据状态
 
-本文件记录了真实 WorkBuddy 客户端的离线演示，但**不是已完成 WorkBuddy 专项奖励条件的证明**。真实 MCP 对话和市场提交若发生，应另外记录客户端版本、运行时间、版本提交号、用户输入、实际工具调用与输出，以及经过脱敏的原始记录位置。不得用 CLI 测试或说明文案替代未执行的流程；是否符合专项条件由活动主办方核验。
+- **已具备**：2026-10-14 在真实 WorkBuddy 客户端中导入并附加本项目 Skill（`mcd-agent-gourmet`，详情显示 `version: 0.3.2`），并在附加该 Skill 的对话中实际执行了本地构造券演示（退出码 0、输出为合法 JSON、明确标注 `mode: synthetic`）；该次会话的**对话上下文已按活动规则导出为脱敏摘要**（见上节）。
+- **仍缺**：真实 MCP 券包 / 选店 / 用券核价的整条 WorkBuddy 对话；技能市场提交或审核回执。若后续发生，应另附客户端版本、运行时间、版本提交号、用户输入、实际工具调用与输出，以及脱敏后的原始记录位置。
+- **不得**用 CLI 测试或说明文案替代未执行的流程；是否符合专项条件由活动主办方核验。

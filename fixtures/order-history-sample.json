@@ -1,0 +1,44 @@
+{
+  "note": "2026-10-17 通过官方 MCP order-list 实拍后脱敏：orderId 替换为占位、traceId/datetime 移除、门店名与门店编码脱敏（个人消费记录不外泄）、beCode 移除；商品编码与数量保持原样。",
+  "payload": {
+    "success": true,
+    "code": 200,
+    "message": "请求成功",
+    "datetime": "<已移除>",
+    "traceId": "<已移除>",
+    "data": {
+      "list": [
+        {
+          "orderId": "ORDER_ID_REDACTED",
+          "orderType": "1",
+          "createTime": "2026-07-23 19:32:49",
+          "beType": "1",
+          "storeCode": "已脱敏",
+          "storeName": "南京某门店（名称已脱敏）",
+          "orderStatus": "订单已完成",
+          "orderProductList": [
+            {
+              "productCode": "9900008751",
+              "productName": "可乐",
+              "quantity": 1,
+              "comboItemList": [
+                {
+                  "productCode": "3000",
+                  "name": "可乐小杯",
+                  "quantity": 1
+                }
+              ]
+            },
+            {
+              "productCode": "1700",
+              "productName": "麦辣鸡翅2块",
+              "quantity": 1,
+              "comboItemList": []
+            }
+          ],
+          "realTotalAmount": "24"
+        }
+      ]
+    }
+  }
+}

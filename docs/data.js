@@ -1,6 +1,117 @@
 window.GOURMET_SNAPSHOTS = [
   {
     "mode": "snapshot",
+    "captured_at": "2026-10-17T02:14:12+08:00",
+    "store": {
+      "code": "1990043",
+      "name": "麦当劳南京洪武餐厅",
+      "address": "洪武路119号",
+      "city": "南京"
+    },
+    "source": {
+      "tools": [
+        "query-nearby-stores",
+        "query-meals",
+        "query-meal-detail",
+        "calculate-price",
+        "now-time-info"
+      ],
+      "note": "2026-10-17 02:13（北京时间）通过官方 MCP 实时核价后存为历史快照。所有金额为 calculate-price 返回的整数分。"
+    },
+    "scope": {
+      "note": "同店同时刻对比「同样的东西：巨无霸 + 中薯条 + 中杯可乐」两条点法。套餐内饮料使用套餐内部 SKU（3050），单品直选用可单点 SKU（9900008751）——两者等价，但 3050 单独核价为 0 分，属套餐内部构成项。"
+    },
+    "evidence": {
+      "per_item_cents": {
+        "1100": 2550,
+        "4810": 1350,
+        "9900008751": 950,
+        "3050": 0
+      },
+      "single_pick_cents": 4850,
+      "combo_cents": 3650,
+      "note": "3050 单点核价为 0，说明它是套餐内部 SKU；基线篮子不能用它，否则会算出偏小的省钱数字。"
+    },
+    "plans": [
+      {
+        "id": "single-pick",
+        "name": "单品直选",
+        "variant": "巨无霸 + 中薯条 + 可乐（单点）",
+        "store_code": "1990043",
+        "items": [
+          {
+            "code": "1100",
+            "name": "巨无霸",
+            "quantity": 1,
+            "kind": "main",
+            "spicy": false
+          },
+          {
+            "code": "4810",
+            "name": "中薯条",
+            "quantity": 1,
+            "kind": "side",
+            "is_fries": true
+          },
+          {
+            "code": "9900008751",
+            "name": "可乐",
+            "quantity": 1,
+            "kind": "drink",
+            "ice": "standard",
+            "sugar": "regular"
+          }
+        ],
+        "price_cents": 4850,
+        "spicy": false,
+        "nutrition_missing": true,
+        "energy_kcal": null,
+        "sodium_mg": null,
+        "protein_g": null,
+        "quote_tool": "calculate-price"
+      },
+      {
+        "id": "combo-3pc",
+        "name": "巨无霸三件套",
+        "variant": "套餐（巨无霸 + 中薯条 + 可乐中杯）",
+        "store_code": "1990043",
+        "items": [
+          {
+            "code": "1100",
+            "name": "巨无霸",
+            "quantity": 1,
+            "kind": "main",
+            "spicy": false
+          },
+          {
+            "code": "4810",
+            "name": "中薯条",
+            "quantity": 1,
+            "kind": "side",
+            "is_fries": true
+          },
+          {
+            "code": "3050",
+            "name": "可乐中杯",
+            "quantity": 1,
+            "kind": "drink",
+            "ice": "standard",
+            "sugar": "regular"
+          }
+        ],
+        "price_cents": 3650,
+        "spicy": false,
+        "nutrition_missing": true,
+        "energy_kcal": null,
+        "sodium_mg": null,
+        "protein_g": null,
+        "quote_tool": "calculate-price"
+      }
+    ],
+    "baseline_plan_id": "single-pick"
+  },
+  {
+    "mode": "snapshot",
     "fulfillment": {
       "channel": "pickup"
     },

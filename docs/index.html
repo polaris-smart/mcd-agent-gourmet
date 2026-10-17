@@ -2,12 +2,12 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="有糖或无糖、带冰或去冰，按你的口味比较麦当劳餐单。网页提供历史报价演示，实时查询需连接麦当劳 MCP。">
+<meta name="description" content="价格一律以麦当劳官方当次核价为准。菜单价有时附带条件（如随单购卡），此时会同时显示条件与核价；也会告诉你同样的东西还有没有更便宜的点法。">
 <meta name="theme-color" content="#aa2369">
-<meta property="og:title" content="按你的口味，算清这一餐。｜麦门点餐议事会">
-<meta property="og:description" content="先看门店，再选口味与预算。真实核价的历史样例，无需登录体验。">
+<meta property="og:title" content="只认官方当次核价｜麦门点餐议事会">
+<meta property="og:description" content="只认官方当次核价：同样的东西，单品直选 ¥48.50，三件套 ¥36.50，省 ¥12.00（24.7%）。无需登录体验。">
 <meta property="og:image" content="https://polaris-smart.github.io/mcd-agent-gourmet/assets/social.png">
-<title>麦门点餐议事会 · 按你的口味，算清这一餐。</title>
+<title>麦门点餐议事会 · 把菜单价换成你真正要付的钱</title>
 <link rel="icon" href="assets/mark.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css">
 <script defer src="data.js"></script><script defer src="review.js"></script><script defer src="app.js"></script>
 </head>
@@ -16,16 +16,36 @@
 <header class="site-header wrap"><a class="brand" href="./"><img src="assets/mark.svg" alt="" width="32" height="32"><span>麦门<span class="brand-sub">点餐议事会</span></span></a><nav aria-label="主导航"><a href="#handoff">查询自己的门店</a><a class="repo-link" href="https://github.com/polaris-smart/mcd-agent-gourmet" target="_blank" rel="noopener noreferrer">GitHub · 支持作品 <span aria-hidden="true">↗</span></a></nav></header>
 <main class="wrap">
 <section class="intro" aria-labelledby="title">
-<div class="intro-copy"><p class="snapshot-badge">独立参赛作品 · 无需登录体验</p><h1 id="title">按你的口味，<br>算清这一餐。</h1><p class="lead">有糖还是无糖，带冰还是去冰，按你喜欢的来。<br>选好预算和口味，看看哪些餐单适合这次需求。</p><p class="intro-note">当前可比较主食、小食、饮料各一份的套餐。<br>网页使用历史报价；实时菜单与价格请通过 WorkBuddy 查询。</p><a class="primary intro-action" href="#workbench">开始选餐 <span aria-hidden="true">↓</span></a></div>
+<div class="intro-copy"><p class="snapshot-badge">独立参赛作品 · 无需登录体验</p><h1 id="title">只认官方<br>当次核价。</h1><p class="lead">菜单价有时附带条件（例如要随单购买一张卡、或限定时段），<br>这时核价会不同——所以这里只报核价，并把条件一并说明。</p><p class="intro-note">示例（同店同时刻）：巨无霸+中薯条+可乐中杯，单品直选 ¥48.50，三件套 ¥36.50——<strong>省 ¥12.00（24.7%）</strong>。<br>网页使用历史报价；实时菜单与价格请通过 WorkBuddy 查询。</p><a class="primary intro-action" href="#workbench">看这一餐怎么点 <span aria-hidden="true">↓</span></a></div>
 </section>
 <section id="workbench" class="workbench" aria-labelledby="compare-title">
-<div class="section-head"><div><h2 id="compare-title">先看门店，再选餐</h2><p>每家店单独比较，价格和供应以对应核价时间为准。</p></div><button class="quiet" id="reset" type="button">重置条件 <span aria-hidden="true">↺</span></button></div>
+<section id="answer" class="answer" aria-labelledby="answer-title" hidden>
+<div class="section-head"><div><h2 id="answer-title">这顿就它了</h2><p>不用你从表格里挑。理由是可核对的事实，不是说服话术。</p></div></div>
+<div class="answer-card">
+<p class="answer-meal" id="answer-meal"></p>
+<p class="answer-price"><strong id="answer-price"></strong><span id="answer-store"></span></p>
+<p class="answer-reason" id="answer-reason"></p>
+<div class="answer-actions">
+<button type="button" id="go-card" class="primary">就这个</button>
+<button type="button" id="open-compare" class="quiet">我想比较</button>
+<button type="button" id="change-conditions" class="quiet">换个条件</button>
+</div>
+</div>
+<div id="card" class="order-card" hidden tabindex="-1" aria-labelledby="card-title">
+<p class="card-title" id="card-title">点单卡（可复制）</p>
+<div id="card-lines" class="card-lines"></div>
+<button type="button" id="copy-card" class="quiet">复制清单</button>
+<span id="card-message" role="status"></span>
+</div>
+</section>
+
+<div class="section-head"><div><h2 id="compare-title">想换条件，就在这里调</h2><p>每家店单独比较，价格和供应以对应核价时间为准。</p></div><button class="quiet" id="reset" type="button">重置条件 <span aria-hidden="true">↺</span></button></div>
 <label for="sample">演示门店 · 历史报价</label><select id="sample" aria-describedby="data-notice"></select>
 <section class="sample-store" aria-labelledby="sample-store-title"><h3 id="sample-store-title">这组历史报价来自哪家店？</h3><p id="store-name"></p><p id="store-address"></p><p id="store-address-source" class="field-note"></p><p class="field-note">这是演示门店，不代表你附近的门店。<a href="#handoff">查询自己的门店与当前价格 →</a></p></section>
 <p id="data-notice" class="data-notice"></p>
 <h3 class="conditions-title">这次想怎么吃？</h3>
 <form id="controls" class="controls">
-<div class="budget-control"><label for="budget">这餐预算 <span>元</span></label><div class="budget-input"><span aria-hidden="true">¥</span><input id="budget" type="number" value="35" min="1" max="10000" step="0.01" required inputmode="decimal" aria-describedby="budget-error"></div><div class="presets" aria-label="快捷预算"><button type="button" data-budget="30">30</button><button type="button" data-budget="35">35</button><button type="button" data-budget="40">40</button><button type="button" data-budget="50">50</button></div><span id="budget-error" class="error" role="alert"></span></div>
+<div class="budget-control"><label for="budget">这餐预算 <span>元</span></label><div class="budget-input"><span aria-hidden="true">¥</span><input id="budget" type="number" value="50" min="1" max="10000" step="0.01" required inputmode="decimal" aria-describedby="budget-error"></div><div class="presets" aria-label="快捷预算"><button type="button" data-budget="30">30</button><button type="button" data-budget="35">35</button><button type="button" data-budget="40">40</button><button type="button" data-budget="50">50</button></div><span id="budget-error" class="error" role="alert"></span></div>
 <div><label for="taste">汉堡口味</label><select id="taste"><option value="any" selected>都可以</option><option value="spicy">优先选辣味</option><option value="no-spicy">一定要不辣</option></select><label class="check" for="fries"><input id="fries" type="checkbox">小食一定要薯条</label></div>
 <fieldset class="sugar-choice" aria-describedby="sugar-note"><legend>可乐想喝哪一种？</legend><label class="check"><input type="radio" name="sugar" value="regular">有糖可乐</label><label class="check"><input type="radio" name="sugar" value="zero">无糖可乐</label><label class="check"><input type="radio" name="sugar" value="any" checked>都可以</label><p class="field-note" id="sugar-note">按你的口味选，有糖和无糖都支持。<br>未确认糖类的餐品不会算作符合指定偏好。</p></fieldset>
 <div><label for="ice">饮料冰量</label><select id="ice"><option value="any">暂不指定</option><option value="standard">标准冰</option><option value="less">少冰</option><option value="none">去冰</option><option value="extra">多冰</option></select><p id="ice-note" class="field-note"></p></div>
@@ -36,7 +56,9 @@
 <div class="result-heading"><p id="result-summary" role="status"></p><span>价格 · 营养 · 取舍，一起看</span></div>
 <label class="check result-toggle"><input type="checkbox" id="show-excluded">也看看不符合条件的餐单及原因</label>
 <p id="empty-message" class="empty" hidden></p>
+<details id="compare-wrap" class="compare"><summary>我想比较：全部候选与「为什么不是它」</summary>
 <div class="table-scroll"><table><caption class="sr-only">当前样例餐单比较；全部金额来自历史官方核价</caption><thead><tr><th scope="col">完整餐单</th><th scope="col">当次整单核价</th><th scope="col">营养数据合计</th><th scope="col">这份的取舍</th><th scope="col"><span class="sr-only">选择餐单</span></th></tr></thead><tbody id="plans"></tbody></table></div>
+</details>
 <details class="strategy"><summary>展开比较价格与营养数据</summary><label for="strategy">比较角度</label><select id="strategy"><option value="price_sodium">价格与钠含量</option><option value="taste_sodium">口味偏好与钠含量</option><option value="nutrition_multi">价格、钠、能量与蛋白质</option></select><p class="field-note">只比较符合你条件、营养数据完整的餐单。有的价格更低，有的钠更少或蛋白质更多，保留这些差异供你选择。数据不换算成健康分数。四维比较可能保留多份甚至全部候选，并不代表唯一的“均衡最优”；缺少任一所选指标的餐单不进入该项比较。</p><div id="tradeoffs" aria-live="polite"></div></details>
 <details class="reviewer-details"><summary>看看三种推荐角度</summary><div class="council" aria-labelledby="council-title"><div class="council-heading"><h2 id="council-title">三个标准，各自看什么</h2><span class="small-tag">规则比较</span></div><div id="voices"></div><p class="consensus" id="consensus" aria-live="polite"></p></div></details>
 <div class="source-line"><span id="source"></span><a href="https://github.com/polaris-smart/mcd-agent-gourmet/blob/main/docs/validation.md" target="_blank" rel="noopener noreferrer">查看实测记录 ↗</a></div>
