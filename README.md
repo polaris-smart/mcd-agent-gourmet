@@ -14,7 +14,7 @@
 
 > **English TL;DR** — A read-only McDonald's China MCP client + agent skill. Say *"35 yuan, not spicy, regular cola, no ice, takeaway"* and it compares **complete** meals (main + side + drink) using official per-order pricing, tells you **why each rejected meal lost** (dominated by which candidate, on which axis), and when nothing fits it says so — plus how much budget would actually be needed. An explicit regular-cola choice is never silently swapped for zero sugar. [English README](README_EN.md) · [30-second demo](https://polaris-smart.github.io/mcd-agent-gourmet/)
 
-![首屏：只认官方当次核价，直接给一个答案和可复制的点单卡](docs/assets/hero.png)
+![首屏：右侧同店同时刻的核价对比（单品直选 ¥48.50 vs 三件套 ¥36.50），下方一个答案 + 可复制点单卡](docs/assets/hero.png)
 
 ## 先试 30 秒
 
@@ -24,6 +24,7 @@
 - 点 **「就这个」**：出现可复制的点单卡（门店 / 取餐方式 / 每样官方名称 / 合计）。
 - 把预算改成 **30 元**：它说没有方案，并告诉你最低需要多少（¥36.50）——不硬凑。
 - 想看别的，点 **「我想比较」**：才展开全部候选与「为什么不是它」。默认不给表格。
+- 想看得更深，展开 **「更细的比较」**：切换比较角度（价格与钠 / 口味与钠 / 四维营养），并看三种推荐角度各自选了什么。
 
 点单卡就是最终产出物——门店、取餐方式、每样官方名称、合计，照着它就能在 App 或柜台点单：
 

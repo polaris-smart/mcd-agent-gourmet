@@ -1,5 +1,11 @@
 # 验证记录
 
+## 宣传图按新页面重拍 · 2026-10-24
+
+- **背景。** 2026-10-24 的布局修订（首屏两栏、结果区折叠行合并、handoff 两栏）之后，`README` 引用的 `assets/hero.png`、`assets/results.png`、`assets/social.png` 仍是改版前的单栏截图；`assets/mobile.png` 同样过期。
+- **已执行：从线上页面重拍。** 四张图均取自 `https://polaris-smart.github.io/mcd-agent-gourmet/`（部署完成、禁用缓存后实拍）：`hero.png` 1440×900、`results.png` 1440×900（已展开候选面板）、`mobile.png` 390×844、`social.png` 1200×630（由新首屏裁切）。`README` 图注同步，并补上「更细的比较」这一步。
+- **未改动。** 页面本身、`docs/data.js`、`docs/review.js` 与所有文案逻辑未动；`order-card.png` 仍是 2026-10-24 的点单卡特写，未过期。
+
 ## 页面布局修订 · 2026-10-24
 
 - **背景。** 首屏 `.intro` 曾被限制在 760px，而 `main.wrap` 是 1160px，左右边界不齐、右侧约 400px 长期空着；样式表另有 4 段后置覆盖（把首屏从两栏改成单栏、把 `.controls` 从 3 栏改成 4 栏），并残留 13 个硬编码十六进制颜色，绕开了 OKLCH 令牌。
