@@ -31,7 +31,7 @@
 
 ![点「我想比较」才展开全部候选与「为什么不是它」](docs/assets/results.png)
 
-网页使用历史快照，所有比较在你的浏览器内完成，不收集凭证、不调用下单、不加入追踪器；本项目为独立参赛作品，非麦当劳官方产品。也可看 [35 秒录屏演示](https://polaris-smart.github.io/mcd-agent-gourmet/assets/demo.mp4)（旧版界面录制，界面以当前页面为准）。
+网页使用历史快照，所有比较在你的浏览器内完成，不收集凭证、不调用下单、不加入追踪器；本项目为独立参赛作品，非麦当劳官方产品。也可看 [30 秒录屏演示](https://polaris-smart.github.io/mcd-agent-gourmet/assets/demo.mp4)（当前界面，静音）。
 
 ## 首屏长这样（一个答案，不用你挑）
 

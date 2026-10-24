@@ -7,6 +7,8 @@
 - **未改动。** 页面文案、主色 hue 343、门店脱敏数据、`aria-*`、跳转链接与 44px 触摸目标全部保持原样；`review.js` / `app.js` / `data.js` 逻辑未动。
 - **已执行：四视口实测。** 1425 / 753 / 375 / 305 宽度均无横向溢出（`scrollWidth == clientWidth`）；桌面文档高度 3167（改前 3306），移动 4221（改前 4321）。截图见 [桌面](evidence/visual-2026-10-24/desktop.png)、[390px](evidence/visual-2026-10-24/mobile.png)、[320px](evidence/visual-2026-10-24/narrow.png)。
 - **已执行：交互回归。** 点「就这个」仍出现点单卡（门店名无重复脱敏后缀）；预算改 30 仍显示「0 份符合当前硬性条件」与最低需要 ¥36.50；折叠区、复制、记忆条件均可用。
+- **已执行：结果区折叠行合并（2026-10-24 追加）。** 4 行收为 2 行：「也看看不符合条件的餐单及原因」移进`#compare-wrap` 候选面板（它只影响那张表），「比较角度」与「三种推荐角度」合并为「更细的比较」。`#compare-wrap` / `#show-excluded` / `#strategy` / `#tradeoffs` / `#voices` / `#consensus` / `#council-title` 全部保留，`app.js` 的 `#open-compare` 与 select/checkbox 监听未改动；实测打开候选面板、切换比较角度、三种推荐均正常。
+- **已执行：演示视频重制（2026-10-24）。** `assets/demo.mp4` 由旧的 v0.2 三角色界面换成当前界面：真实浏览器逐帧截图（6 fps，178 帧）→ ffmpeg 编码，**29.7 秒 / 1280×800 / H.264 / 静音**，约 1.8 MB；README、演示页、推广包、本文件里的「35 秒 / 旧版界面 / 2 fps」描述已同步。
 - **已知未做。** 触控目标审计里仍有 5 个 18px 的 checkbox/radio（其 `<label>` 为 44px，可点区域合格）与行内文字链接（高度 13–22px），与改版前一致，不在本次范围。
 
 ## 门店标识脱敏与验收重采集 · 2026-10-17
@@ -122,4 +124,4 @@ node tests/parity.cjs
 
 ## 演示素材（录制于 v0.2.0）
 
-`assets/order-card.png`、`assets/mobile.png` 和 `assets/social.png` 来自当前页面截图；`assets/demo.mp4` 为真实浏览器操作截图以 2 fps 采样制作的 35 秒静音演示，字幕只添加在录制页面，未改写数据或计算结果。旧版三角色界面截图已移至 `evidence/legacy/preview-old-ui.png`，仅作历史留档，不再出现在 README 或网页里。
+`assets/order-card.png`、`assets/mobile.png` 和 `assets/social.png` 来自当前页面截图；`assets/demo.mp4` 为真实浏览器逐帧截图以 6 fps 采样、ffmpeg 编码的 29.7 秒静音演示（1280×800 / H.264），字幕只添加在录制页面，未改写数据或计算结果。旧版三角色界面截图已移至 `evidence/legacy/preview-old-ui.png`，仅作历史留档，不再出现在 README 或网页里。
