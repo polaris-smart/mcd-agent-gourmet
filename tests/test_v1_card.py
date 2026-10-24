@@ -77,6 +77,20 @@ class OrderCard(unittest.TestCase):
         for item in next(p for p in result['plans'] if p['id'] == card['plan_id'])['items']:
             self.assertIn(item['name'], card['text'])
 
+    def test_card_does_not_repeat_redaction_marker(self):
+        # 脱敏快照的门店名里已含「（名称与地址已脱敏）」，卡片不应再把编码拼成「（已脱敏）」
+        result = review(self.data, budget_cents=5000)
+        card = order_card(result)
+        self.assertNotIn('）（已脱敏）', card['text'])
+
+    def test_card_keeps_numeric_store_code(self):
+        data = copy.deepcopy(self.data)
+        data['store']['code'] = '1234567'
+        for plan in data['plans']:
+            plan['store_code'] = '1234567'
+        card = order_card(review(data, budget_cents=5000))
+        self.assertIn('（1234567）', card['text'])
+
     def test_card_includes_saving_line_when_baseline_present(self):
         result = review(self.data, budget_cents=5000, baseline_plan_id='fish-classic')
         card = order_card(result, 'cheese-corn')

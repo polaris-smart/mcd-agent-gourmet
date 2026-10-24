@@ -77,7 +77,10 @@ function orderCard(result,planId){
  if(!picked.eligible)throw new Error('该候选不符合当前条件，不能生成点单卡。');
  const ways=Array.isArray(picked.take_way_options)?picked.take_way_options:[];
  const way=ways.length&&ways[0]&&ways[0].title?ways[0].title:'到店自取';
- const lines=[`门店：${result.store.name}（${result.store.code}）· ${way}`];
+ // 真实门店编码是数字，拼成「名称（编码）」便于核对；脱敏快照的编码不是真实编码，再拼会重复「（已脱敏）」
+ const storeCode=result.store.code==null?'':String(result.store.code);
+ const storeLabel=/^\d+$/.test(storeCode)?`${result.store.name}（${storeCode}）`:result.store.name;
+ const lines=[`门店：${storeLabel} · ${way}`];
  picked.items.forEach((item,index)=>{const spec=(item.customizations||[]).join('、');lines.push(`${index+1}. ${item.name}${spec?'（'+spec+'）':''}`);});
  lines.push(`合计：¥${money(picked.price_cents)}`);
  if(result.baseline&&picked.saving_cents>0)lines.push(`比「${result.baseline.label}」省 ¥${money(picked.saving_cents)}（${picked.saving_percent.toFixed(1)}%）`);

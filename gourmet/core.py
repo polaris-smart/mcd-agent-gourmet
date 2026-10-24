@@ -216,7 +216,11 @@ def order_card(result, plan_id=None):
         raise ValueError("该候选不符合当前条件，不能生成点单卡。")
     ways = plan.get("take_way_options") or []
     way = ways[0].get("title") if ways and isinstance(ways[0], dict) else "到店自取"
-    lines = ["门店：%s（%s）· %s" % (result["store"]["name"], result["store"]["code"], way)]
+    # 真实门店编码是数字，拼成「名称（编码）」便于核对；脱敏快照里编码不是真实编码，
+    # 再拼一次会把「（已脱敏）」重复显示，所以只在编码为纯数字时附上。
+    store_code = str(result["store"].get("code") or "")
+    store_label = "%s（%s）" % (result["store"]["name"], store_code) if store_code.isdigit() else result["store"]["name"]
+    lines = ["门店：%s · %s" % (store_label, way)]
     for index, item in enumerate(plan["items"], 1):
         spec = "、".join(item.get("customizations") or [])
         lines.append("%d. %s%s" % (index, item["name"], ("（%s）" % spec) if spec else ""))
