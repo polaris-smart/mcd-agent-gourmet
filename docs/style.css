@@ -76,3 +76,16 @@
 @media(max-width:640px){
   .intro-proof{display:none}
 }
+
+/* 结果区：4 个折叠行合并为 2 个
+   - 「也看看不符合条件」移进候选面板（它只影响那张表）
+   - 比较角度 + 三种推荐合并为「更细的比较」 */
+.deeper{border-top:1px solid var(--line);padding:18px 0}
+.deeper>summary{cursor:pointer;font-size:13px;min-height:40px;display:list-item;align-content:center;padding:6px 0}
+.deeper-block{padding:14px 0 4px}
+.deeper-block+.deeper-block{border-top:1px solid var(--line);margin-top:10px;padding-top:20px}
+.deeper-block>label{display:block;margin:0 0 10px;font-size:14px;font-weight:650}
+.deeper-block select{max-width:100%}
+.deeper .council{background:transparent;border:0;padding:0}
+.deeper .council h2{font-size:17px}
+.compare .result-toggle{margin:12px 0 6px}
