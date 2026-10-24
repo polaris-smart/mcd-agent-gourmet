@@ -113,4 +113,4 @@ node tests/parity.cjs
 
 ## 演示素材（录制于 v0.2.0）
 
-`assets/preview.png`、`assets/mobile.png` 和 `assets/social.png` 来自实际页面截图；`assets/demo.mp4` 为真实浏览器操作截图以 2 fps 采样制作的 35 秒静音演示，字幕只添加在录制页面，未改写数据或计算结果。
+`assets/order-card.png`、`assets/mobile.png` 和 `assets/social.png` 来自当前页面截图；`assets/demo.mp4` 为真实浏览器操作截图以 2 fps 采样制作的 35 秒静音演示，字幕只添加在录制页面，未改写数据或计算结果。旧版三角色界面截图已移至 `evidence/legacy/preview-old-ui.png`，仅作历史留档，不再出现在 README 或网页里。

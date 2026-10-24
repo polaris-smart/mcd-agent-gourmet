@@ -1,5 +1,7 @@
 # Meal Council · McDonald's China MCP
 
+> A concise English summary. The [Chinese README](README.md) is the source of truth and carries the full detail (pricing policy, coupon/member tools, verification records).
+
 **"35 yuan, not spicy, regular cola with no ice, takeaway."** Say it once and compare a complete meal — an explicit regular-cola choice is never silently swapped for zero sugar, and when nothing fits it says so instead of selling you a lone soda.
 
 [Try the demo in 30 seconds](https://polaris-smart.github.io/mcd-agent-gourmet/) · [中文](README.md)
