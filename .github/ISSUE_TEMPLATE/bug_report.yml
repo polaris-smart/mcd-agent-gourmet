@@ -1,0 +1,42 @@
+name: Bug 报告
+description: 报一个可以复现的问题
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        请勿附带 Token、账号信息或原始优惠券数据。
+  - type: textarea
+    id: input
+    attributes:
+      label: 你输入了什么
+      description: 完整命令，或网页上的条件组合（预算 / 口味 / 糖 / 冰量 / 取餐方式）
+      placeholder: |
+        python3 demo.py --budget 35 --taste no-spicy --side fries --ice none
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 你期望什么
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: 实际出现什么
+      description: 报错原文或截图。涉及实时核价的，请说明是 `--live` 还是历史快照。
+    validations:
+      required: true
+  - type: input
+    id: env
+    attributes:
+      label: 环境
+      placeholder: macOS 15 / Python 3.12 / 浏览器版本
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: 确认
+      options:
+        - label: 我没有在这个 Issue 里包含 Token、账号或券数据
+          required: true
