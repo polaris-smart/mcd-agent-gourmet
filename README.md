@@ -249,6 +249,6 @@ tests/               Python 回归与 Python/JS 决策一致性
 
 M-CODE 2026 独立参赛作品，非麦当劳官方产品。[官方报名记录](https://github.com/M-China/mcd-developer-innovation-challenge/issues/565)。本次修订使用 Codex 辅助，WorkBuddy 历史材料与证据状态单独说明，不将本次工作冒充 WorkBuddy 对话。
 
-欢迎提 Issue，描述“我输入了什么、期望什么、实际出现什么”；**不要附 Token、账号或原始优惠券数据**。如果这个透明决策的思路对你有帮助，欢迎点一颗 Star。
+欢迎提 Issue，描述“我输入了什么、期望什么、实际出现什么”；**不要附 Token、账号或原始优惠券数据**。提 PR 前请先看 [CONTRIBUTING.md](CONTRIBUTING.md)（本地四步检查：测试 / parity / CLI 冒烟 / `data.js` 无 drift）。如果这个透明决策的思路对你有帮助，欢迎点一颗 Star。
 
 原创代码采用 [MIT License](LICENSE)。官方参赛声明按官方原文保留，相关商标与服务条款归权利人所有。输出仅供参考，餐品信息、价格和供应状态以官方当前结果为准，不构成医疗、营养或其他专业建议。
