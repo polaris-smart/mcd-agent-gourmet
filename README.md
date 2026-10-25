@@ -4,15 +4,17 @@
 [![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-3776AB)](https://github.com/polaris-smart/mcd-agent-gourmet)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
-**同样的东西，两条点法差 ¥12.00（24.7%）。** 价格一律以麦当劳官方当次核价为准：菜单价有时附带条件（例如需要随单购买一张卡），这种情况下核价会不同——所以它只报核价，并把条件一并说明。
+**同样一份餐，两条点法差 ¥12.00（24.7%）。** 同店同时刻：单品直选 ¥48.50，三件套 ¥36.50。
 
-这就是它做的事：**把你这一餐真正要付的钱算出来**，再告诉你有没有更便宜的点法。金额一律来自官方 `calculate-price` 的整数分；菜单展示价只作参考，附带条件会一并说清。
+**一句话 → 一个答案 → 一张点单卡。** 说「35 元，不辣，有糖可乐去冰，带走」，它把这一餐真正要付的钱算出来，给你一张能照着点的清单；没有方案就直说没有，不拿不完整的餐单凑数。
 
-**「35 元，不辣，有糖可乐去冰，带走。」** 一句话说清需求，给你**一个答案 + 一张能照着点单的清单**；没有满足条件的方案就直说没有，不会用不完整的餐单凑数。
+**菜单写 ¥32.00，核价 ¥58.50 —— 它只认后者。** 实测遇到过展示价要求随单购买麦金卡；这时它会同时给出条件与核价。金额一律取官方 `calculate-price` 返回的整数分。
+
+**不领券、不兑换、不下单、不支付，也不收集你的 Token。** 网页打开就是答案：不用账号、不用 Token、不用安装；要实时核价时，Token 只留在你本机的环境变量里。
 
 [打开在线体验（免登录）](https://polaris-smart.github.io/mcd-agent-gourmet/) · [安装 Skill](#在-workbuddy-里使用) · [真实联调记录](docs/validation.md) · [English](README_EN.md)
 
-> **English TL;DR** — A read-only McDonald's China MCP client + agent skill. Say *"35 yuan, not spicy, regular cola, no ice, takeaway"* and it compares **complete** meals (main + side + drink) using official per-order pricing, tells you **why each rejected meal lost** (dominated by which candidate, on which axis), and when nothing fits it says so — plus how much budget would actually be needed. An explicit regular-cola choice is never silently swapped for zero sugar. [English README](README_EN.md) · [30-second demo](https://polaris-smart.github.io/mcd-agent-gourmet/)
+> **English TL;DR** — A read-only McDonald's China MCP client + agent skill. Say *"35 yuan, not spicy, regular cola, no ice, takeaway"* and it compares **complete** meals (main + side + drink) using official per-order pricing, tells you **why each rejected meal lost** (dominated by which candidate, on which axis), and when nothing fits it says so — plus how much budget would actually be needed. An explicit regular-cola choice is never silently swapped for zero sugar. It never orders, pays, or collects your token. [English README](README_EN.md) · [30-second demo](https://polaris-smart.github.io/mcd-agent-gourmet/)
 
 ![首屏：右侧同店同时刻的核价对比（单品直选 ¥48.50 vs 三件套 ¥36.50），下方一个答案 + 可复制点单卡](docs/assets/hero.png)
 
